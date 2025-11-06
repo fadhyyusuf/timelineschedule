@@ -35,7 +35,7 @@ Add the dependency to your app's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.github.yourusername:timelineschedule:1.0.0")
+    implementation("com.github.fadhyyusuf:timelineschedule:tag")
 }
 ```
 
