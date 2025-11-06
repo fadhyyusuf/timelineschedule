@@ -1,0 +1,32 @@
+# Gradle Properties
+# Compatible with Gradle 8.0+ and AGP 8.0+ (May 2023 onwards)
+
+# Kotlin Code Style
+kotlin.code.style=official
+
+# Android Configuration
+android.useAndroidX=true
+android.enableJetifier=false
+
+# Gradle Optimization
+org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+org.gradle.parallel=true
+org.gradle.caching=true
+org.gradle.configureondemand=true
+
+# AndroidX Configuration
+android.nonTransitiveRClass=true
+android.defaults.buildfeatures.buildconfig=true
+
+# Compatibility Settings
+# Enable non-final R classes for better backward compatibility
+android.nonFinalResIds=true
+
+# Kotlin Compiler
+kotlin.incremental=true
+kotlin.incremental.useClasspathSnapshot=true
+
+# Build Performance
+org.gradle.daemon=true
+org.gradle.configuration-cache=true
+

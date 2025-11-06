@@ -1,114 +1,77 @@
-# ✅ Custom Time Labels Feature - COMPLETE!
+# Custom Time Labels Feature
 
-## 🎯 Fitur Baru: Dynamic Time Labels
+> **⚠️ AI-Generated Project Disclaimer**  
+> This project was created with the assistance of Artificial Intelligence (AI). While the code has been reviewed and tested, users should verify functionality for their specific use cases.
 
-Time labels sekarang bisa **100% customizable** dari parent app! Anda bisa memberikan **list of string** apapun yang Anda mau.
+## Overview
 
----
+The Custom Time Labels feature allows you to replace the default hourly time labels (e.g., "08:00 AM", "09:00 AM") with your own custom labels. This is useful for various scenarios where standard time labels don't fit your use case.
 
-## 📊 Sebelum vs Sesudah
+## Use Cases
 
-### ❌ Before (Fixed/Limited):
+### 1. **Custom Time Periods**
+Display non-standard time intervals:
 ```kotlin
-// Time labels otomatis dari appointments
-// Terbatas pada jam yang ada di appointments
-// Format fixed (08:00, 09:00, etc)
-```
-
-### ✅ After (Dynamic/Flexible):
-```kotlin
-// Bisa set custom labels apapun!
-val customLabels = listOf(
-    "Morning",
-    "Brunch", 
-    "Lunch",
-    "Afternoon",
-    "Evening"
-)
-```
-
----
-
-## 🚀 Cara Menggunakan
-
-### Option 1: Auto-Generated (Default)
-Tidak set `customTimeLabels`, library akan generate otomatis dari appointments:
-
-```kotlin
-val config = TimelineConfig(
-    hourHeight = 120,
-    // customTimeLabels tidak diset = auto
-)
-
-timelineView.setConfig(config)
-timelineView.setAppointments(appointments)
-```
-
-Result:
-```
-┌──────────┬─────────
-│ 08:00 AM │ [App 1]
-├──────────┼─────────
-│ 09:00 AM │ [App 2]
-├──────────┼─────────
-│ 10:00 AM │
-```
-
-### Option 2: Custom Labels (New! ✨)
-Set `customTimeLabels` dengan list string apapun:
-
-```kotlin
-val customLabels = listOf(
+listOf(
     "07:00 AM",
+    "07:30 AM",
     "08:00 AM",
-    "09:00 AM",
-    "10:00 AM",
-    "11:00 AM",
-    "12:00 PM",
-    "01:00 PM",
-    "02:00 PM",
-    "03:00 PM"
+    "08:30 AM",
+    // ...
 )
-
-val config = TimelineConfig(
-    hourHeight = 120,
-    customTimeLabels = customLabels  // Set custom!
-)
-
-timelineView.setConfig(config)
-timelineView.setAppointments(appointments)
 ```
 
-Result:
-```
-┌──────────┬─────────
-│ 07:00 AM │
-├──────────┼─────────
-│ 08:00 AM │ [App 1]
-├──────────┼─────────
-│ 09:00 AM │ [App 2]
-├──────────┼─────────
-│ 10:00 AM │
-├──────────┼─────────
-│ 11:00 AM │
-├──────────┼─────────
-│ 12:00 PM │
-├──────────┼─────────
-│ 01:00 PM │
-├──────────┼─────────
-│ 02:00 PM │
-├──────────┼─────────
-│ 03:00 PM │
-└──────────┴─────────
-```
-
----
-
-## 🎨 Example Use Cases
-
-### 1. Standard Time Format
+### 2. **Named Time Blocks**
+Use descriptive names instead of times:
 ```kotlin
-val labels = listOf(
+listOf(
+    "Early Morning",
+    "Morning",
+    "Late Morning",
+    "Noon",
+    "Afternoon",
+    "Evening",
+    "Night"
+)
+```
+
+### 3. **Event-Based Labels**
+Label times by events:
+```kotlin
+listOf(
+    "Registration",
+    "Opening Ceremony",
+    "Keynote Speech",
+    "Break",
+    "Workshop A",
+    "Workshop B",
+    "Lunch",
+    "Panel Discussion",
+    "Closing"
+)
+```
+
+### 4. **Custom Schedule Labels**
+For schools, businesses, or special events:
+```kotlin
+listOf(
+    "Period 1",
+    "Period 2",
+    "Recess",
+    "Period 3",
+    "Period 4",
+    "Lunch",
+    "Period 5",
+    "Period 6"
+)
+```
+
+## How to Use
+
+### Basic Implementation
+
+```kotlin
+val customLabels = listOf(
     "07:00 AM",
     "08:00 AM",
     "09:00 AM",
@@ -121,364 +84,283 @@ val labels = listOf(
     "04:00 PM",
     "05:00 PM"
 )
-```
 
-### 2. 24-Hour Format
-```kotlin
-val labels = listOf(
-    "07:00",
-    "08:00",
-    "09:00",
-    "10:00",
-    "11:00",
-    "12:00",
-    "13:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00"
+val config = TimelineConfig(
+    hourHeight = 120,
+    customTimeLabels = customLabels
 )
+
+binding.timelineView.setConfig(config)
 ```
 
-### 3. Custom Text
-```kotlin
-val labels = listOf(
-    "Early Morning",
-    "Morning",
-    "Late Morning",
-    "Noon",
-    "Afternoon",
-    "Late Afternoon",
-    "Evening"
-)
-```
-
-### 4. Mixed Format
-```kotlin
-val labels = listOf(
-    "7 AM - Breakfast",
-    "8 AM - Morning Clinic",
-    "9 AM",
-    "10 AM",
-    "11 AM",
-    "12 PM - Lunch Break",
-    "1 PM - Afternoon Clinic",
-    "2 PM",
-    "3 PM",
-    "4 PM",
-    "5 PM - End"
-)
-```
-
-### 5. Short Labels
-```kotlin
-val labels = listOf(
-    "7", "8", "9", "10", "11", "12", 
-    "1", "2", "3", "4", "5"
-)
-```
-
-### 6. Emoji Labels 😄
-```kotlin
-val labels = listOf(
-    "🌅 7 AM",
-    "☕ 8 AM",
-    "💼 9 AM",
-    "📊 10 AM",
-    "📧 11 AM",
-    "🍽️ 12 PM",
-    "👔 1 PM",
-    "💻 2 PM",
-    "📱 3 PM",
-    "🏃 4 PM",
-    "🏠 5 PM"
-)
-```
-
----
-
-## 💻 Technical Implementation
-
-### TimelineConfig
-```kotlin
-data class TimelineConfig(
-    // ... existing properties
-    
-    // Custom time labels (NEW!)
-    val customTimeLabels: List<String>? = null
-)
-```
-
-### TimelineScheduleView
-```kotlin
-private fun buildTimeLabels() {
-    timeColumn.removeAllViews()
-    val hourHeight = config.hourHeight.dpToPx()
-    
-    // Use custom labels if provided
-    val customLabels = config.customTimeLabels
-    if (customLabels != null) {
-        buildCustomTimeLabels(customLabels, hourHeight)
-    } else {
-        buildAutoTimeLabels(hourHeight)  // Auto-generate
-    }
-}
-
-private fun buildCustomTimeLabels(labels: List<String>, hourHeight: Int) {
-    val totalHeight = hourHeight * labels.size
-    
-    labels.forEach { label ->
-        val timeView = TextView(context).apply {
-            text = label  // Use custom label!
-            textSize = config.timeTextSize
-            setTextColor(config.timeTextColor)
-            // ... styling
-        }
-        timeColumn.addView(timeView)
-    }
-    
-    updateContainerHeights(totalHeight)
-}
-```
-
----
-
-## 📐 How It Works
-
-### 1. Count Labels
-```kotlin
-val labelCount = config.customTimeLabels?.size ?: (endHour - startHour + 1)
-```
-
-### 2. Calculate Height
-```kotlin
-val totalHeight = hourHeight * labelCount
-```
-
-### 3. Draw Grid Lines
-```kotlin
-for (i in 0 until labelCount) {
-    val y = i * hourHeight.toFloat()
-    canvas.drawLine(0f, y, width.toFloat(), y, gridPaint)
-}
-```
-
----
-
-## ✅ Features
-
-### Flexibility:
-✅ **Any text** - tidak terbatas format jam  
-✅ **Any length** - bisa 5 labels, 10 labels, 20 labels, etc  
-✅ **Any content** - text, emoji, mixed, apapun  
-
-### Compatibility:
-✅ Works with all existing features  
-✅ Grid lines adjust automatically  
-✅ Dividers align perfectly  
-✅ Current time indicator still works  
-
-### Styling:
-✅ Uses existing `timeTextSize`  
-✅ Uses existing `timeTextColor`  
-✅ Uses existing `hourHeight`  
-✅ Consistent with theme  
-
----
-
-## 🎯 Complete Example
+### Complete Example
 
 ```kotlin
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        
+
+        setupTimelineWithCustomLabels()
+    }
+
+    private fun setupTimelineWithCustomLabels() {
         // Define custom time labels
-        val timeLabels = listOf(
-            "07:00 AM",
-            "08:00 AM",
-            "09:00 AM",
-            "10:00 AM",
-            "11:00 AM",
-            "12:00 PM",
-            "01:00 PM",
-            "02:00 PM",
-            "03:00 PM",
-            "04:00 PM",
-            "05:00 PM"
+        val customLabels = listOf(
+            "Early Morning (6-7 AM)",
+            "Morning (7-8 AM)",
+            "Mid Morning (8-9 AM)",
+            "Late Morning (9-10 AM)",
+            "Pre-Noon (10-11 AM)",
+            "Noon (11-12 PM)",
+            "Early Afternoon (12-1 PM)",
+            "Afternoon (1-2 PM)",
+            "Mid Afternoon (2-3 PM)",
+            "Late Afternoon (3-4 PM)",
+            "Early Evening (4-5 PM)",
+            "Evening (5-6 PM)"
         )
-        
-        // Configure timeline
+
+        // Create appointments
+        val appointments = createSampleAppointments()
+
+        // Configure timeline with custom labels
         val config = TimelineConfig(
             hourHeight = 120,
-            customTimeLabels = timeLabels,  // Use custom!
+            use24HourFormat = false,
             showGridLines = true,
-            gridLineColor = Color.parseColor("#BDBDBD"),
-            showCurrentTimeIndicator = true
+            gridLineColor = Color.parseColor("#E0E0E0"),
+            showCurrentTimeIndicator = true,
+            currentTimeIndicatorColor = Color.parseColor("#FF5252"),
+            customTimeLabels = customLabels  // Set custom labels here
         )
-        
-        // Setup view
+
+        // Apply configuration and appointments
         binding.timelineView.apply {
             setConfig(config)
             setAppointments(appointments)
+            setOnAppointmentClickListener { appointment ->
+                Toast.makeText(
+                    this@MainActivity,
+                    "Clicked: ${appointment.title}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
+    }
+
+    private fun createSampleAppointments(): List<Appointment> {
+        val today = Calendar.getInstance()
+
+        return listOf(
+            Appointment(
+                id = "1",
+                title = "Morning Workout",
+                subtitle = "Gym Session",
+                startTime = createTime(today, 7, 0),
+                endTime = createTime(today, 8, 0),
+                color = Color.parseColor("#4CAF50"),
+                backgroundColor = Color.WHITE
+            ),
+            Appointment(
+                id = "2",
+                title = "Team Meeting",
+                subtitle = "Weekly Sync",
+                startTime = createTime(today, 9, 0),
+                endTime = createTime(today, 10, 0),
+                color = Color.parseColor("#2196F3"),
+                backgroundColor = Color.WHITE
+            ),
+            Appointment(
+                id = "3",
+                title = "Lunch Break",
+                subtitle = null,
+                startTime = createTime(today, 12, 0),
+                endTime = createTime(today, 13, 0),
+                color = Color.parseColor("#FF9800"),
+                backgroundColor = Color.parseColor("#FFF3E0")
+            )
+        )
+    }
+
+    private fun createTime(calendar: Calendar, hour: Int, minute: Int): java.util.Date {
+        val cal = calendar.clone() as Calendar
+        cal.set(Calendar.HOUR_OF_DAY, hour)
+        cal.set(Calendar.MINUTE, minute)
+        cal.set(Calendar.SECOND, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        return cal.time
     }
 }
 ```
 
----
+## Important Notes
 
-## 🔧 Advanced Usage
+### Label Count and Spacing
 
-### Dynamic Labels from Server
+- The number of custom labels determines the number of time blocks displayed
+- Each label corresponds to one time block on the timeline
+- The `hourHeight` parameter controls the height of each block
+- Appointments are positioned relative to these blocks
+
+### Appointment Positioning
+
+When using custom labels, appointment positioning works as follows:
+
+1. **Without Custom Labels**: Appointments are positioned based on actual time (e.g., 8:00 AM, 9:30 AM)
+2. **With Custom Labels**: Appointments are still positioned by time, but the labels show your custom text
+
+Example:
 ```kotlin
-// Get labels from API
-lifecycleScope.launch {
-    val labels = apiService.getTimeLabels()
+// Custom labels
+customTimeLabels = listOf("Block 1", "Block 2", "Block 3")
+
+// Appointment at 8:00 AM will appear in the first block
+// Appointment at 9:00 AM will appear in the second block
+// etc.
+```
+
+### Best Practices
+
+1. **Consistent Spacing**: Use consistent time intervals for predictable layout
+2. **Clear Labels**: Keep labels short and descriptive
+3. **Match Appointments**: Ensure appointment times align with your custom time blocks
+4. **Test Different Sizes**: Adjust `hourHeight` to ensure labels are readable
+
+## Dynamic Updates
+
+You can update custom labels dynamically:
+
+```kotlin
+fun updateTimeLabels(newLabels: List<String>) {
     val config = TimelineConfig(
-        customTimeLabels = labels
+        customTimeLabels = newLabels
     )
-    timelineView.setConfig(config)
+    binding.timelineView.setConfig(config)
+    
+    // Optionally refresh appointments
+    binding.timelineView.setAppointments(currentAppointments)
 }
 ```
 
-### User Preference
-```kotlin
-// Let user choose format
-val labels = when (userPreference) {
-    "12hour" -> generate12HourLabels()
-    "24hour" -> generate24HourLabels()
-    "custom" -> userCustomLabels
-}
+## Examples by Scenario
 
-val config = TimelineConfig(
-    customTimeLabels = labels
+### School Schedule
+
+```kotlin
+val schoolSchedule = listOf(
+    "8:00 - Period 1 (Math)",
+    "9:00 - Period 2 (English)",
+    "10:00 - Recess",
+    "10:30 - Period 3 (Science)",
+    "11:30 - Period 4 (History)",
+    "12:30 - Lunch Break",
+    "13:30 - Period 5 (Art)",
+    "14:30 - Period 6 (PE)",
+    "15:30 - Home Time"
 )
 ```
 
-### Localization
+### Conference Schedule
+
 ```kotlin
-// Use localized labels
-val labels = listOf(
-    getString(R.string.time_7am),
-    getString(R.string.time_8am),
-    // ... etc
+val conferenceSchedule = listOf(
+    "08:00 - Registration",
+    "09:00 - Welcome & Keynote",
+    "10:30 - Coffee Break",
+    "11:00 - Session 1",
+    "12:00 - Lunch",
+    "13:00 - Session 2",
+    "14:00 - Workshops",
+    "15:30 - Networking",
+    "16:30 - Closing Remarks"
 )
 ```
 
----
+### Medical Clinic
 
-## 📊 Comparison
-
-### Before:
 ```kotlin
-// ❌ Fixed hour range
-// ❌ Auto-generated from appointments only
-// ❌ Fixed format (08:00, 09:00)
-// ❌ Can't customize
-
-timelineView.setAppointments(appointments)
-// Labels: 08:00, 09:00, 10:00, 11:00
-```
-
-### After:
-```kotlin
-// ✅ Fully customizable
-// ✅ Any text/format
-// ✅ Any number of labels
-// ✅ Dynamic from parent app
-
-val config = TimelineConfig(
-    customTimeLabels = listOf(
-        "Morning", "Noon", "Afternoon", "Evening"
-    )
-)
-// Labels: Morning, Noon, Afternoon, Evening
-```
-
----
-
-## 🐛 Troubleshooting
-
-### Q: Labels tidak muncul?
-**A:** Pastikan `customTimeLabels` diset di config:
-```kotlin
-val config = TimelineConfig(
-    customTimeLabels = yourLabels  // Jangan null!
+val clinicHours = listOf(
+    "08:00 AM - Morning Shift Start",
+    "09:00 AM",
+    "10:00 AM",
+    "11:00 AM",
+    "12:00 PM - Lunch Break",
+    "01:00 PM - Afternoon Shift",
+    "02:00 PM",
+    "03:00 PM",
+    "04:00 PM",
+    "05:00 PM - Closing"
 )
 ```
 
-### Q: Grid lines tidak align?
-**A:** Grid lines otomatis adjust sesuai jumlah labels. Pastikan `showGridLines = true`.
+### Gym Schedule
 
-### Q: Height terlalu besar/kecil?
-**A:** Adjust `hourHeight` di config:
 ```kotlin
-val config = TimelineConfig(
-    hourHeight = 100,  // Smaller
-    customTimeLabels = yourLabels
+val gymClasses = listOf(
+    "06:00 - Early Bird Yoga",
+    "07:00 - Morning HIIT",
+    "08:00 - Spin Class",
+    "09:00 - Pilates",
+    "10:00 - CrossFit",
+    "11:00 - Boxing",
+    "12:00 - Lunch Hour Flow",
+    "17:00 - Evening Bootcamp",
+    "18:00 - Zumba",
+    "19:00 - Night Yoga"
 )
 ```
 
----
+## Limitations
 
-## ✅ Build Status
+- Custom labels are static strings and don't auto-update based on time
+- The number of labels should match your intended time blocks
+- Very long labels may be truncated depending on available space
+- Labels are displayed in order from top to bottom
 
-```bash
-> Task :timelineschedule:compileReleaseKotlin
-> Task :app:assembleDebug
-BUILD SUCCESSFUL in 7s ✓
-```
+## Future Enhancements
 
-**No errors, production ready!** 🚀
+Potential future features:
+- Auto-generate labels based on time range
+- Support for multi-line labels
+- Customizable label styling (font, size, color)
+- Label templates for common use cases
 
----
+## Troubleshooting
 
-## 📝 API Reference
+### Labels Not Showing
 
-### TimelineConfig
+Ensure:
+- `customTimeLabels` is not empty
+- Labels are provided as a `List<String>`
+- Config is applied before setting appointments
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `customTimeLabels` | `List<String>?` | `null` | Custom time labels. If null, auto-generated |
-| `hourHeight` | `Int` | `100` | Height per label in dp |
-| `timeTextSize` | `Float` | `12f` | Label text size in sp |
-| `timeTextColor` | `Int` | `GRAY` | Label text color |
+### Labels Overlapping
 
-### Methods
+Try:
+- Increasing `hourHeight` value
+- Using shorter label text
+- Adjusting font size (if customization is available)
 
-```kotlin
-// Set config with custom labels
-fun setConfig(config: TimelineConfig)
+### Appointments Misaligned
 
-// Auto mode (no custom labels)
-val config = TimelineConfig()
+Remember:
+- Appointments use actual time values
+- Custom labels are just visual text
+- Ensure appointment times match your intended blocks
 
-// Custom mode
-val config = TimelineConfig(
-    customTimeLabels = listOf("7 AM", "8 AM", "9 AM")
-)
-```
+## Support
 
----
-
-## 🎉 Summary
-
-**Feature Complete!**
-
-✅ **Dynamic time labels** - dari parent app  
-✅ **List of string** - format bebas  
-✅ **Fully customizable** - text, emoji, apapun  
-✅ **Backward compatible** - auto mode masih works  
-✅ **Production ready** - tested & documented  
-
-**Time labels sekarang 100% flexible dan powerful!** 🚀✨
+For issues or questions about custom time labels:
+- Check the [main README](README.md)
+- Review [TECHNICAL.md](TECHNICAL.md) for implementation details
+- Open an issue on [GitHub](https://github.com/fadhyyusuf/timelineschedule/issues)
 
 ---
 
-**Updated: November 6, 2024**  
-**Version: 1.1.0**  
-**Status: ✅ Feature Complete!**
+Made with ❤️ and AI assistance
 

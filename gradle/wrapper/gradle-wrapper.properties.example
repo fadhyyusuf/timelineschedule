@@ -1,0 +1,10 @@
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+# Gradle 8.2 - Released August 2023 (Compatible with AGP 8.0+)
+# Minimum: 8.0 (Feb 2023) | Recommended: 8.2+ (Aug 2023)
+distributionUrl=https\://services.gradle.org/distributions/gradle-8.2-bin.zip
+networkTimeout=10000
+validateDistributionUrl=true
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+

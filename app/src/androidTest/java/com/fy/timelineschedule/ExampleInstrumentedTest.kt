@@ -1,3 +1,15 @@
+/*
+ * Timeline Schedule - Android Library
+ *
+ * ⚠️ AI-GENERATED PROJECT DISCLAIMER
+ * This project was created with the assistance of Artificial Intelligence (AI).
+ * While the code has been reviewed and tested, users should verify functionality
+ * for their specific use cases.
+ *
+ * Copyright (c) 2025 Fadhy Yusuf
+ * Licensed under the MIT License
+ */
+
 package com.fy.timelineschedule
 
 import androidx.test.platform.app.InstrumentationRegistry

@@ -1,0 +1,41 @@
+[versions]
+# Compatible with November 2023 - November 2025 (2 years backward compatible)
+
+# Android Gradle Plugin - Minimum 8.0.0 (May 2023)
+agp = "8.1.4"
+
+# Kotlin - Minimum 1.8.0 (Dec 2022), Recommended 1.9.0+ (July 2023)
+kotlin = "1.9.20"
+
+# AndroidX Core - Minimum 1.10.0 (May 2023)
+coreKtx = "1.12.0"
+
+# AppCompat - Minimum 1.6.0 (Jan 2023)
+appcompat = "1.6.1"
+
+# Material Design - Minimum 1.9.0 (May 2023)
+material = "1.11.0"
+
+# Test Libraries
+junit = "4.13.2"
+junitVersion = "1.1.5"
+espressoCore = "3.5.1"
+
+[libraries]
+# AndroidX
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+
+# Material Design
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+# Testing
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+

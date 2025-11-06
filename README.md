@@ -1,28 +1,50 @@
 # Timeline Schedule Library
 
-A powerful and customizable Android library for displaying appointments in a timeline format with automatic overlap handling.
+> **⚠️ AI-Generated Project Disclaimer**  
+> This project was created with the assistance of Artificial Intelligence (AI). While the code has been reviewed and tested, users should verify functionality for their specific use cases.
 
-## Features
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Platform](https://img.shields.io/badge/platform-Android-green.svg)](http://developer.android.com/index.html)
+[![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
 
-✅ **Automatic Overlap Handling** - Intelligently displays overlapping appointments side by side
-✅ **Fully Customizable** - Colors, sizes, formats, and more
-✅ **Material Design** - Built with Material Design components
-✅ **Easy to Use** - Simple API with fluent configuration
-✅ **Lightweight** - Minimal dependencies
-✅ **Compatible** - Works with Android API 21+ (Android 5.0 Lollipop and above)
+A modern, flexible, and customizable timeline schedule view library for Android applications. Perfect for appointment booking systems, calendar views, scheduling apps, and any application that needs to display time-based events in a vertical timeline format.
 
-## Screenshots
+## ✨ Features
 
-![Timeline Schedule Demo](screenshot.png)
+- 📅 **Vertical Timeline Layout** - Display appointments in a clean, scrollable vertical timeline
+- ⏰ **Flexible Time Range** - Support for 12-hour and 24-hour formats
+- 🎨 **Fully Customizable** - Colors, sizes, fonts, and styling options
+- 📱 **Responsive Design** - Automatic column layout for overlapping appointments
+- 🔍 **Current Time Indicator** - Real-time visual indicator showing current time
+- 🎯 **Click Listeners** - Handle appointment clicks with ease
+- 🏷️ **Custom Time Labels** - Set your own time labels (NEW!)
+- 🎭 **Multiple Appointment States** - Support for different appointment statuses
+- 🌈 **Color Coding** - Distinguish appointments by color
+- ⚡ **Smooth Scrolling** - Optimized performance for large datasets
+- 📐 **Grid Lines** - Optional grid lines for better time visualization
+- 🔄 **Real-time Updates** - Dynamically update appointments
 
-## Installation
+## 📸 Screenshots
 
-### Gradle
+*Coming soon*
 
-Add the JitPack repository to your root `build.gradle.kts`:
+## 🚀 Quick Start
+
+### Installation
+
+Add the dependency to your app's `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    implementation("com.github.fadhyyusuf:timelineschedule:1.0.0")
+}
+```
+
+Add JitPack repository to your root `settings.gradle.kts`:
 
 ```kotlin
 dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
@@ -31,235 +53,135 @@ dependencyResolutionManagement {
 }
 ```
 
-Add the dependency to your app's `build.gradle.kts`:
+### Basic Usage
 
-```kotlin
-dependencies {
-    implementation("com.github.fadhyyusuf:timelineschedule:tag")
-}
-```
-
-### Local Module
-
-For local development, add the library module to your project:
-
-```kotlin
-dependencies {
-    implementation(project(":timelineschedule"))
-}
-```
-
-## Quick Start
-
-### 1. Add TimelineScheduleView to your layout
+1. **Add to your layout:**
 
 ```xml
-<com.fy.timelineschedule.view.TimelineScheduleView
+<com.fy.timelineschedule.TimelineView
     android:id="@+id/timelineView"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
 ```
 
-### 2. Create appointments and display them
+2. **Create appointments in your Activity/Fragment:**
 
 ```kotlin
-import com.fy.timelineschedule.model.Appointment
-import com.fy.timelineschedule.view.TimelineScheduleView
-import java.util.Calendar
+val appointments = listOf(
+    Appointment(
+        id = "1",
+        title = "Doctor Appointment",
+        subtitle = "Dr. Smith",
+        startTime = createTime(8, 0),
+        endTime = createTime(9, 0),
+        color = Color.parseColor("#2196F3"),
+        backgroundColor = Color.WHITE
+    ),
+    Appointment(
+        id = "2",
+        title = "Team Meeting",
+        subtitle = "Conference Room A",
+        startTime = createTime(10, 0),
+        endTime = createTime(11, 30),
+        color = Color.parseColor("#4CAF50"),
+        backgroundColor = Color.WHITE
+    )
+)
 
-class MainActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        
-        val timelineView = findViewById<TimelineScheduleView>(R.id.timelineView)
-        
-        // Create sample appointments
-        val appointments = listOf(
-            Appointment(
-                id = "1",
-                title = "Dr. Smith",
-                subtitle = "Consultation",
-                startTime = createTime(9, 0),
-                endTime = createTime(10, 0),
-                color = Color.parseColor("#2196F3")
-            ),
-            Appointment(
-                id = "2",
-                title = "Team Meeting",
-                subtitle = "Conference Room A",
-                startTime = createTime(10, 30),
-                endTime = createTime(11, 30),
-                color = Color.parseColor("#4CAF50")
-            )
-        )
-        
-        // Set appointments
-        timelineView.setAppointments(appointments)
-        
-        // Set click listener
-        timelineView.setOnAppointmentClickListener { appointment ->
-            Toast.makeText(this, "Clicked: ${appointment.title}", Toast.LENGTH_SHORT).show()
-        }
-    }
-    
-    private fun createTime(hour: Int, minute: Int): Date {
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, hour)
-        calendar.set(Calendar.MINUTE, minute)
-        calendar.set(Calendar.SECOND, 0)
-        return calendar.time
-    }
+binding.timelineView.setAppointments(appointments)
+```
+
+3. **Handle clicks:**
+
+```kotlin
+binding.timelineView.setOnAppointmentClickListener { appointment ->
+    Toast.makeText(this, "Clicked: ${appointment.title}", Toast.LENGTH_SHORT).show()
 }
 ```
 
-## Advanced Usage
+## 🎨 Customization
 
-### Custom Configuration
-
-```kotlin
-import com.fy.timelineschedule.model.TimelineConfig
-import com.fy.timelineschedule.model.OverlapStrategy
-
-val config = TimelineConfig(
-    // Time column settings
-    timeColumnWidth = 80,
-    timeTextSize = 12f,
-    timeTextColor = Color.GRAY,
-    hourHeight = 120,
-    
-    // Grid settings
-    showGridLines = true,
-    gridLineColor = Color.parseColor("#E0E0E0"),
-    gridLineWidth = 1f,
-    
-    // Card settings
-    cardCornerRadius = 8f,
-    cardElevation = 2f,
-    cardPadding = 8,
-    
-    // Indicator settings
-    indicatorWidth = 4f,
-    showIndicatorDot = true,
-    
-    // Text settings
-    titleTextSize = 14f,
-    subtitleTextSize = 12f,
-    
-    // Time format
-    use24HourFormat = false,
-    
-    // Overlap handling
-    overlapStrategy = OverlapStrategy.SIDE_BY_SIDE,
-    maxOverlapColumns = 3
-)
-
-timelineView.setConfig(config)
-```
-
-### Appointment Model
-
-```kotlin
-Appointment(
-    id = "unique-id",                    // Unique identifier
-    title = "Appointment Title",         // Main title (required)
-    subtitle = "Optional Subtitle",      // Optional subtitle
-    startTime = Date(),                  // Start time
-    endTime = Date(),                    // End time
-    color = Color.BLUE,                  // Indicator color
-    avatarUrl = "https://...",          // Avatar URL (optional)
-    avatarDrawableRes = R.drawable.avatar, // Or drawable resource
-    backgroundColor = Color.WHITE,       // Card background color
-    textColor = Color.BLACK             // Text color
-)
-```
-
-### Handling Overlapping Appointments
-
-The library automatically handles overlapping appointments. You can configure the behavior:
+### Timeline Configuration
 
 ```kotlin
 val config = TimelineConfig(
-    overlapStrategy = OverlapStrategy.SIDE_BY_SIDE, // Display side by side
-    maxOverlapColumns = 3 // Maximum columns for overlapping appointments
+    hourHeight = 120,                    // Height of each hour in pixels
+    use24HourFormat = false,             // Use 12-hour or 24-hour format
+    showGridLines = true,                // Show horizontal grid lines
+    gridLineColor = Color.GRAY,          // Grid line color
+    gridLineWidth = 1f,                  // Grid line width
+    showVerticalDivider = true,          // Show vertical divider between time and content
+    verticalDividerColor = Color.GRAY,   // Vertical divider color
+    verticalDividerWidth = 2f,           // Vertical divider width
+    showCurrentTimeIndicator = true,     // Show current time indicator
+    currentTimeIndicatorColor = Color.RED, // Current time indicator color
+    currentTimeIndicatorWidth = 2f,      // Current time indicator width
+    currentTimeDotRadius = 6f,           // Current time dot radius
+    cardCornerRadius = 8f,               // Appointment card corner radius
+    cardElevation = 2f,                  // Appointment card elevation
+    customTimeLabels = listOf(           // Custom time labels (optional)
+        "07:00 AM",
+        "08:00 AM",
+        "09:00 AM",
+        // ... more labels
+    )
+)
+
+binding.timelineView.setConfig(config)
+```
+
+### Custom Time Labels
+
+You can now set custom time labels instead of using the default hourly labels:
+
+```kotlin
+val customLabels = listOf(
+    "Early Morning",
+    "Morning",
+    "Late Morning",
+    "Noon",
+    "Afternoon",
+    "Evening"
+)
+
+val config = TimelineConfig(
+    customTimeLabels = customLabels
 )
 ```
 
-Available strategies:
-- `SIDE_BY_SIDE` - Display overlapping appointments side by side (default)
-- `STACKED` - Stack with slight offset
-- `HIDE_OVERLAP` - Hide overlapping appointments (not recommended)
+See [CUSTOM_TIME_LABELS.md](CUSTOM_TIME_LABELS.md) for more details.
 
-### Event Listeners
+## 📖 Documentation
 
-```kotlin
-// Click listener
-timelineView.setOnAppointmentClickListener { appointment ->
-    // Handle click
-    showAppointmentDetails(appointment)
-}
+- [Quick Start Guide](QUICKSTART.md) - Detailed setup instructions
+- [Custom Time Labels](CUSTOM_TIME_LABELS.md) - Learn about custom time labels feature
+- [Technical Documentation](TECHNICAL.md) - Architecture and implementation details
+- [Publishing Guide](PUBLISHING.md) - How to publish this library
+- [Changelog](CHANGELOG.md) - Version history and changes
+- [New Features](NEW_FEATURES.md) - Latest features and enhancements
 
-// Long click listener
-timelineView.setOnAppointmentLongClickListener { appointment ->
-    // Handle long click
-    showAppointmentOptions(appointment)
-}
-```
+## 🔧 Requirements
 
-## Customization Options
+### Minimum Requirements
+- **Android API 21+** (Android 5.0 Lollipop or higher)
+- **Kotlin 1.8.0+** (1.9.0+ recommended)
+- **Android Gradle Plugin 8.0.0+** (8.1.0+ recommended)
+- **Gradle 8.0+** (8.2+ recommended)
+- **Java 11+** (Java 17 recommended)
+- **AndroidX** libraries
 
-### TimelineConfig Properties
+### Compatibility
+✅ **2 Years Backward Compatible** - Supports projects from November 2023 onwards
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `timeColumnWidth` | Int | 80 | Width of time column in dp |
-| `timeTextSize` | Float | 12f | Size of time text in sp |
-| `timeTextColor` | Int | GRAY | Color of time text |
-| `hourHeight` | Int | 100 | Height of each hour in dp |
-| `showGridLines` | Boolean | true | Show/hide grid lines |
-| `gridLineColor` | Int | #E0E0E0 | Color of grid lines |
-| `gridLineWidth` | Float | 1f | Width of grid lines |
-| `cardCornerRadius` | Float | 8f | Corner radius of appointment cards |
-| `cardElevation` | Float | 2f | Elevation of appointment cards |
-| `indicatorWidth` | Float | 4f | Width of color indicator |
-| `titleTextSize` | Float | 14f | Size of title text |
-| `subtitleTextSize` | Float | 12f | Size of subtitle text |
-| `use24HourFormat` | Boolean | false | Use 24-hour time format |
-| `overlapStrategy` | OverlapStrategy | SIDE_BY_SIDE | How to handle overlaps |
+**Tested With:**
+- AGP 8.0.x - 8.5.x
+- Kotlin 1.8.x - 2.0.x
+- Gradle 8.0 - 8.6
+- Android Studio Hedgehog (2023.1.1) or newer
 
-### Appointment Properties
+For detailed compatibility information, see [COMPATIBILITY.md](COMPATIBILITY.md)
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `id` | String | ✅ | Unique identifier |
-| `title` | String | ✅ | Main title |
-| `subtitle` | String? | ❌ | Optional subtitle |
-| `startTime` | Date | ✅ | Start time |
-| `endTime` | Date | ✅ | End time |
-| `color` | Int | ❌ | Indicator color (default: blue) |
-| `avatarUrl` | String? | ❌ | Avatar URL |
-| `avatarDrawableRes` | Int? | ❌ | Avatar drawable resource |
-| `backgroundColor` | Int | ❌ | Card background (default: white) |
-| `textColor` | Int | ❌ | Text color (default: black) |
-
-## Requirements
-
-- **Minimum SDK**: 21 (Android 5.0 Lollipop)
-- **Target SDK**: 34 (Android 14)
-- **Kotlin**: 1.9+
-- **Gradle**: 7.0+
-
-## Dependencies
-
-- AndroidX Core KTX
-- AndroidX AppCompat
-- Material Components
-
-## Sample App
-
-The repository includes a sample app demonstrating all features. Check the `app` module for implementation examples.
-
-## Contributing
+## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
@@ -269,41 +191,47 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## License
+## 📝 License
 
 ```
-Copyright 2024 FY
+MIT License
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Copyright (c) 2025 Fadhy Yusuf
 
-    http://www.apache.org/licenses/LICENSE-2.0
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 ```
 
-## Author
+## 👤 Author
 
-**FY** - [GitHub](https://github.com/yourusername)
+**Fadhy Yusuf**
 
-## Changelog
+- GitHub: [@fadhyyusuf](https://github.com/fadhyyusuf)
 
-### Version 1.0.0 (2024-11-06)
-- Initial release
-- Timeline view with automatic overlap handling
-- Customizable appearance
-- Material Design components
-- Click and long-click listeners
-- Support for Android 5.0+
+## 🌟 Show Your Support
 
-## Support
+Give a ⭐️ if this project helped you!
 
-If you find this library useful, please give it a ⭐️ on GitHub!
+## 📞 Contact
 
-For issues and feature requests, please use the [GitHub Issues](https://github.com/yourusername/timelineschedule/issues) page.
+For questions, issues, or feature requests, please open an issue on GitHub.
+
+---
+
+Made with ❤️ and AI assistance
 

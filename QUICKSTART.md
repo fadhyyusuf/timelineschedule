@@ -1,190 +1,300 @@
-# 🚀 Quick Start Guide - Timeline Schedule Library
+# Quick Start Guide
 
-## Installation (5 minutes)
+> **⚠️ AI-Generated Project Disclaimer**  
+> This project was created with the assistance of Artificial Intelligence (AI). While the code has been reviewed and tested, users should verify functionality for their specific use cases.
 
-### Step 1: Add to your project
+## Installation
 
-Add the library module to your project's `settings.gradle.kts`:
+### Step 1: Add JitPack Repository
 
-```kotlin
-include(":timelineschedule")
-```
-
-Add dependency in your app's `build.gradle.kts`:
+Add JitPack to your root `settings.gradle.kts`:
 
 ```kotlin
-dependencies {
-    implementation(project(":timelineschedule"))
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+    }
 }
 ```
 
-### Step 2: Add to layout
-
-In your `activity_main.xml`:
-
-```xml
-<com.fy.timelineschedule.view.TimelineScheduleView
-    android:id="@+id/timelineView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" />
-```
-
-### Step 3: Use in code
-
-In your `MainActivity.kt`:
+Or in your root `build.gradle.kts` (legacy):
 
 ```kotlin
-import com.fy.timelineschedule.model.Appointment
-import com.fy.timelineschedule.view.TimelineScheduleView
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+```
+
+### Step 2: Add Dependency
+
+Add the library dependency to your app's `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    implementation("com.github.fadhyyusuf:timelineschedule:1.0.0")
+}
+```
+
+### Step 3: Sync Project
+
+Sync your project with Gradle files.
+
+## Basic Implementation
+
+### 1. Add TimelineView to Layout
+
+Create or open your layout XML file (e.g., `activity_main.xml`):
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.fy.timelineschedule.TimelineView
+        android:id="@+id/timelineView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### 2. Set Up in Activity/Fragment
+
+#### Using View Binding (Recommended)
+
+**Enable View Binding** in your app's `build.gradle.kts`:
+
+```kotlin
+android {
+    buildFeatures {
+        viewBinding = true
+    }
+}
+```
+
+**In your Activity:**
+
+```kotlin
+package com.example.myapp
+
 import android.graphics.Color
+import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.example.myapp.databinding.ActivityMainBinding
+import com.fy.timelineschedule.model.Appointment
+import com.fy.timelineschedule.model.TimelineConfig
 import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        
-        val timelineView = findViewById<TimelineScheduleView>(R.id.timelineView)
-        
-        // Create appointments
-        val appointments = listOf(
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        setupTimeline()
+    }
+
+    private fun setupTimeline() {
+        // Create sample appointments
+        val appointments = createSampleAppointments()
+
+        // Configure timeline (optional)
+        val config = TimelineConfig(
+            hourHeight = 120,
+            use24HourFormat = false,
+            showGridLines = true,
+            showCurrentTimeIndicator = true,
+            currentTimeIndicatorColor = Color.RED
+        )
+
+        // Set up the timeline view
+        binding.timelineView.apply {
+            setConfig(config)
+            setAppointments(appointments)
+            setOnAppointmentClickListener { appointment ->
+                Toast.makeText(
+                    this@MainActivity,
+                    "Clicked: ${appointment.title}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private fun createSampleAppointments(): List<Appointment> {
+        val today = Calendar.getInstance()
+
+        return listOf(
             Appointment(
                 id = "1",
                 title = "Morning Meeting",
-                subtitle = "Conference Room A",
-                startTime = createTime(9, 0),
-                endTime = createTime(10, 0),
-                color = Color.parseColor("#2196F3")
+                subtitle = "Team Sync",
+                startTime = createTime(today, 9, 0),
+                endTime = createTime(today, 10, 0),
+                color = Color.parseColor("#2196F3"),
+                backgroundColor = Color.WHITE
             ),
             Appointment(
                 id = "2",
+                title = "Doctor Appointment",
+                subtitle = "Dr. Smith",
+                startTime = createTime(today, 11, 0),
+                endTime = createTime(today, 12, 0),
+                color = Color.parseColor("#4CAF50"),
+                backgroundColor = Color.WHITE
+            ),
+            Appointment(
+                id = "3",
                 title = "Lunch Break",
-                startTime = createTime(12, 0),
-                endTime = createTime(13, 0),
-                color = Color.parseColor("#4CAF50")
+                subtitle = null,
+                startTime = createTime(today, 12, 0),
+                endTime = createTime(today, 13, 0),
+                color = Color.parseColor("#FF9800"),
+                backgroundColor = Color.parseColor("#FFF3E0")
             )
         )
-        
-        // Display appointments
-        timelineView.setAppointments(appointments)
-        
-        // Handle clicks (optional)
-        timelineView.setOnAppointmentClickListener { appointment ->
-            Toast.makeText(this, "Clicked: ${appointment.title}", Toast.LENGTH_SHORT).show()
-        }
     }
-    
-    private fun createTime(hour: Int, minute: Int): java.util.Date {
-        val cal = Calendar.getInstance()
+
+    private fun createTime(calendar: Calendar, hour: Int, minute: Int): java.util.Date {
+        val cal = calendar.clone() as Calendar
         cal.set(Calendar.HOUR_OF_DAY, hour)
         cal.set(Calendar.MINUTE, minute)
         cal.set(Calendar.SECOND, 0)
+        cal.set(Calendar.MILLISECOND, 0)
         return cal.time
     }
 }
 ```
 
-## That's it! 🎉
-
-Run your app and you'll see a beautiful timeline with your appointments.
-
----
-
-## Customization (Optional)
-
-Want to customize? Add this before `setAppointments()`:
+#### Using findViewById (Legacy)
 
 ```kotlin
-import com.fy.timelineschedule.model.TimelineConfig
+class MainActivity : AppCompatActivity() {
 
-val config = TimelineConfig(
-    hourHeight = 120,              // Taller hours
-    use24HourFormat = false,       // Use 12-hour format
-    showGridLines = true,          // Show grid lines
-    cardCornerRadius = 8f,         // Rounded corners
-    cardElevation = 2f             // Card shadow
-)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-timelineView.setConfig(config)
+        val timelineView = findViewById<TimelineView>(R.id.timelineView)
+        
+        val appointments = createSampleAppointments()
+        timelineView.setAppointments(appointments)
+        
+        timelineView.setOnAppointmentClickListener { appointment ->
+            Toast.makeText(this, "Clicked: ${appointment.title}", Toast.LENGTH_SHORT).show()
+        }
+    }
+    
+    // ... rest of the code
+}
 ```
 
----
+### 3. Run Your App
 
-## Handling Overlaps
+Build and run your app. You should see a timeline view with your appointments displayed!
 
-The library automatically handles overlapping appointments! Just add them:
+## Next Steps
+
+- **Customize Configuration**: Explore [TimelineConfig](TECHNICAL.md#timelineconfig) options
+- **Custom Time Labels**: Learn about [Custom Time Labels](CUSTOM_TIME_LABELS.md)
+- **Styling**: Customize colors, sizes, and appearance
+- **Dynamic Updates**: Add, remove, or update appointments dynamically
+- **Event Handling**: Implement custom click handlers
+
+## Common Use Cases
+
+### Appointment Booking System
 
 ```kotlin
 val appointments = listOf(
-    // These two appointments overlap - library handles it automatically!
     Appointment(
         id = "1",
-        title = "Meeting A",
-        startTime = createTime(9, 0),
-        endTime = createTime(10, 0),
-        color = Color.BLUE
-    ),
-    Appointment(
-        id = "2",
-        title = "Meeting B",
-        startTime = createTime(9, 30),  // Overlaps with Meeting A
-        endTime = createTime(10, 30),
-        color = Color.RED
+        title = "John Doe",
+        subtitle = "Consultation",
+        startTime = createTime(today, 9, 0),
+        endTime = createTime(today, 9, 30),
+        color = Color.parseColor("#2196F3"),
+        backgroundColor = Color.WHITE
     )
 )
 ```
 
-The library will automatically display them side-by-side! 📅
+### Daily Schedule View
 
----
-
-## More Examples
-
-Check `MainActivity.kt` in the sample app for more examples including:
-- Multiple overlapping appointments
-- Custom colors per appointment
-- Subtitle text
-- Different time ranges
-- Click listeners
-
----
-
-## Need Help?
-
-- 📖 Read the full [README.md](README.md)
-- 🔧 Check [TECHNICAL.md](TECHNICAL.md) for details
-- 💬 Open an issue on GitHub
-
----
-
-## Common Customizations
-
-### Change hour size:
 ```kotlin
-TimelineConfig(hourHeight = 150)  // Bigger hours
-```
-
-### Use 24-hour format:
-```kotlin
-TimelineConfig(use24HourFormat = true)
-```
-
-### Hide grid lines:
-```kotlin
-TimelineConfig(showGridLines = false)
-```
-
-### Customize colors:
-```kotlin
-Appointment(
-    // ...
-    color = Color.parseColor("#FF5722"),           // Indicator color
-    backgroundColor = Color.parseColor("#FFEBEE"),  // Card background
-    textColor = Color.BLACK                         // Text color
+val config = TimelineConfig(
+    hourHeight = 100,
+    use24HourFormat = true,
+    showGridLines = true,
+    showCurrentTimeIndicator = true
 )
 ```
 
+### Custom Time Periods
+
+```kotlin
+val config = TimelineConfig(
+    customTimeLabels = listOf(
+        "Early Morning",
+        "Morning",
+        "Midday",
+        "Afternoon",
+        "Evening",
+        "Night"
+    )
+)
+```
+
+## Troubleshooting
+
+### JitPack Build Failed
+
+If you encounter build errors, ensure:
+- You have internet connection
+- The version tag exists on GitHub
+- JitPack repository is correctly added
+
+### Appointments Not Showing
+
+Check that:
+- Start time is before end time
+- Times are within the visible range
+- Appointments list is not empty
+- `setAppointments()` is called after `setConfig()`
+
+### Current Time Indicator Not Visible
+
+Ensure:
+- `showCurrentTimeIndicator = true` in config
+- Current time is within the timeline range
+- Indicator color contrasts with background
+
+## Support
+
+For more help:
+- Check [Technical Documentation](TECHNICAL.md)
+- Open an issue on [GitHub](https://github.com/fadhyyusuf/timelineschedule/issues)
+- Review sample code in the demo app
+
 ---
 
-**Happy coding! 🎊**
+Made with ❤️ and AI assistance
 

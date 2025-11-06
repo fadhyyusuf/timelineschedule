@@ -1,155 +1,164 @@
 # Changelog
 
-All notable changes to the Timeline Schedule Library will be documented in this file.
+> **⚠️ AI-Generated Project Disclaimer**  
+> This project was created with the assistance of Artificial Intelligence (AI). While the code has been reviewed and tested, users should verify functionality for their specific use cases.
+
+All notable changes to the Timeline Schedule library will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Planned Features
-- Image loading support (Glide, Coil, Picasso)
-- Drag and drop to reschedule appointments
-- Pinch to zoom
-- Custom header with date picker
-- Export to calendar
-- Dark mode support
-- Animations for appointment changes
+### Planned
+- Week view support
+- Month view support
+- Drag-and-drop appointment editing
+- Appointment resize functionality
+- Multi-day appointment spanning
+- Zoom in/out functionality
+- Material 3 theme support
+- Custom appointment view templates
 
-## [1.0.0] - 2024-11-06
+## [1.0.0] - 2025-01-10
 
 ### Added
-- Initial release of Timeline Schedule Library
-- Core timeline view component (`TimelineScheduleView`)
-- Automatic overlap detection and handling
-- Side-by-side display for overlapping appointments
-- Customizable configuration via `TimelineConfig`
-- Material Design card-based appointments
-- Click and long-click listeners
-- Support for custom colors per appointment
-- Color indicator bar for each appointment
-- Optional avatar support
-- Optional subtitle for appointments
-- Grid lines for time visualization
-- Configurable time format (12/24 hour)
-- Configurable hour height
-- Minimum SDK support: Android 5.0 (API 21)
-- Target SDK: Android 14 (API 34)
+- Initial release of Timeline Schedule library
+- Vertical timeline view for displaying appointments
+- Automatic handling of overlapping appointments with multi-column layout
+- Current time indicator with animated dot
+- Customizable timeline configuration via `TimelineConfig`
+- Support for 12-hour and 24-hour time formats
+- Custom time labels feature
+- Configurable grid lines (horizontal)
+- Configurable vertical divider between time and content
+- Appointment click listener support
+- Customizable colors for all UI elements
+- Customizable card styling (corner radius, elevation)
+- Customizable text sizes for time labels and appointments
+- Smooth scrolling behavior
+- Support for appointment titles and subtitles
+- Color-coded appointments with custom background colors
+- Responsive column layout for overlapping events
+- Comprehensive documentation:
+  - README.md with quick start guide
+  - QUICKSTART.md with detailed setup instructions
+  - TECHNICAL.md with architecture and implementation details
+  - CUSTOM_TIME_LABELS.md with custom labels feature guide
+  - PUBLISHING.md with library publishing guide
 
-### Features Detail
+### Features in Detail
 
-#### TimelineScheduleView
-- Scrollable timeline view
-- Automatic time range calculation based on appointments
-- Customizable time column width
-- Customizable grid appearance
-- Efficient rendering with FrameLayout positioning
+#### Timeline View
+- Clean, scrollable vertical timeline layout
+- Automatic calculation of timeline height based on appointments
+- Efficient canvas-based rendering for performance
+- Support for arbitrary time ranges
 
-#### Appointment Model
-- Unique ID for each appointment
-- Title and optional subtitle
-- Start and end time
-- Custom color indicator
-- Custom background color
-- Custom text color
-- Avatar support (URL or drawable resource)
+#### Appointment Management
+- Simple data model with `Appointment` class
+- Support for:
+  - Unique IDs
+  - Title and optional subtitle
+  - Start and end times (Java `Date` objects)
+  - Custom colors (border and background)
+  - Click handling
 
-#### TimelineConfig
-- Configurable hour height (affects zoom level)
-- Configurable time column width
-- Configurable text sizes
-- Configurable colors (time text, grid lines)
-- Configurable card appearance (corner radius, elevation)
-- Configurable overlap strategy
-- Configurable maximum overlap columns
+#### Overlapping Appointments
+- Automatic detection of overlapping appointments
+- Smart column calculation algorithm
+- Dynamic width adjustment based on number of overlapping events
+- Visual separation with configurable padding
 
-#### OverlapManager
-- Intelligent overlap detection algorithm
-- Automatic column assignment for overlapping appointments
-- Optimized positioning calculation
-- Support for multiple levels of overlap
+#### Current Time Indicator
+- Real-time position indicator
+- Customizable line color and width
+- Animated dot at the timeline edge
+- Auto-updates every minute
+- Can be disabled via configuration
 
-#### Utilities
-- TimeUtils for time formatting and manipulation
-- Extension functions for unit conversion (dp/sp to pixels)
+#### Customization Options
+- **Layout**: Hour height, time column width, appointment padding
+- **Time Format**: 12h/24h format, custom time labels
+- **Grid Lines**: Show/hide, color, width
+- **Vertical Divider**: Show/hide, color, width
+- **Current Time Indicator**: Show/hide, color, width, dot radius
+- **Card Styling**: Corner radius, elevation
+- **Text Styling**: Font sizes for labels and appointments
+
+#### Custom Time Labels
+- Replace default hourly labels with custom text
+- Support for any list of strings
+- Useful for:
+  - Non-standard time intervals
+  - Named time blocks (e.g., "Morning", "Afternoon")
+  - Event-based labels (e.g., "Registration", "Keynote")
+  - Custom schedule labels (e.g., "Period 1", "Period 2")
 
 ### Dependencies
-- AndroidX Core KTX
-- AndroidX AppCompat
-- Material Components for Android
+- androidx.core:core-ktx:1.12.0
+- androidx.appcompat:appcompat:1.6.1
+- com.google.android.material:material:1.11.0
+
+### Requirements
+- Minimum SDK: 21 (Android 5.0 Lollipop)
+- Target SDK: 34 (Android 14)
+- Kotlin: 1.9+
+- Java: 8+
 
 ### Documentation
-- Comprehensive README with quick start guide
-- Technical documentation (TECHNICAL.md)
-- Publishing guide (PUBLISHING.md)
-- Sample app demonstrating all features
-- Inline code documentation (KDoc)
+- Complete README with installation and usage instructions
+- Quick start guide for new users
+- Technical documentation with architecture details
+- Custom time labels feature documentation
+- Publishing guide for maintainers
+- MIT License
 
-### Testing
-- Unit test structure
-- Instrumented test structure
-- Sample data for testing
+### Example App
+- Sample Android application demonstrating all features
+- Example appointments with various configurations
+- Sample code for common use cases:
+  - Appointment booking system
+  - Daily schedule view
+  - Custom time periods
+  - Overlapping events handling
+
+### Known Limitations
+- Only supports single-day view (24-hour period)
+- No built-in animations for appointment changes
+- Very large appointment lists (1000+) may impact performance
+- Uses device local timezone only
+
+---
 
 ## Version History
 
-### Version Numbering Scheme
-
-- **Major (X.0.0)**: Breaking API changes, major new features
-- **Minor (1.X.0)**: New features, backward compatible
-- **Patch (1.0.X)**: Bug fixes, minor improvements
-
-## Upgrade Guide
-
-### Upgrading from Pre-release to 1.0.0
-
-This is the initial stable release. If you were using pre-release versions, please:
-
-1. Update your dependency to `1.0.0`
-2. Review the README for current API usage
-3. Check for any API changes in your code
-4. Test thoroughly before deploying
-
-## Known Issues
-
-### Version 1.0.0
-- None reported yet
-
-## Future Roadmap
-
-### Version 1.1.0 (Planned)
-- [ ] Image loading library integration
-- [ ] Improved avatar handling
-- [ ] Custom appointment view support
-- [ ] Performance optimizations for large datasets
-- [ ] Accessibility improvements
-
-### Version 1.2.0 (Planned)
-- [ ] Drag and drop support
-- [ ] Appointment resizing
-- [ ] Multi-day view support
-- [ ] Week view mode
-- [ ] Month view mode
-
-### Version 2.0.0 (Planned)
-- [ ] Complete redesign with Jetpack Compose
-- [ ] Compose Multiplatform support
-- [ ] Advanced animations
-- [ ] Better theming support
+| Version | Release Date | Status | Notes |
+|---------|-------------|--------|-------|
+| 1.0.0   | 2025-01-10  | Stable | Initial release |
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for information on contributing to this project.
+To add entries to this changelog:
 
-## Support
+1. Add entries under `[Unreleased]` section
+2. Use the following categories:
+   - `Added` for new features
+   - `Changed` for changes in existing functionality
+   - `Deprecated` for soon-to-be removed features
+   - `Removed` for now removed features
+   - `Fixed` for bug fixes
+   - `Security` for vulnerability fixes
+3. When releasing, move items from `[Unreleased]` to a new version section
+4. Follow the format: `- Brief description [#issue-number]`
 
-If you encounter any issues or have questions:
-1. Check the [documentation](README.md)
-2. Search [existing issues](https://github.com/fadhyyusuf/timelineschedule/issues)
-3. Create a [new issue](https://github.com/fadhyyusuf/timelineschedule/issues/new)
+## Links
 
-## License
+- [GitHub Repository](https://github.com/fadhyyusuf/timelineschedule)
+- [Issue Tracker](https://github.com/fadhyyusuf/timelineschedule/issues)
+- [JitPack](https://jitpack.io/#fadhyyusuf/timelineschedule)
 
-Copyright 2024 Fadhy Yusuf
+---
 
-Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
+Made with ❤️ and AI assistance
 

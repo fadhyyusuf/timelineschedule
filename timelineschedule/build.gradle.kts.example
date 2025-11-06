@@ -1,6 +1,18 @@
+/*
+ * Timeline Schedule - Android Library
+ *
+ * ⚠️ AI-GENERATED PROJECT DISCLAIMER
+ * This project was created with the assistance of Artificial Intelligence (AI).
+ * While the code has been reviewed and tested, users should verify functionality
+ * for their specific use cases.
+ *
+ * Copyright (c) 2025 Fadhy Yusuf
+ * Licensed under the MIT License
+ */
+
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
     id("maven-publish")
 }
 
@@ -10,9 +22,13 @@ android {
 
     defaultConfig {
         minSdk = 21
+        targetSdk = 34
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        // Version info
+        buildConfigField("String", "VERSION_NAME", "\"1.0.0\"")
     }
 
     buildTypes {
@@ -23,28 +39,51 @@ android {
                 "proguard-rules.pro"
             )
         }
-    }
-
-    buildFeatures {
-        viewBinding = true
+        debug {
+            isMinifyEnabled = false
+        }
     }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
+
+        // Enable explicit API mode for better API stability
+        freeCompilerArgs += listOf(
+            "-opt-in=kotlin.RequiresOptIn"
+        )
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
     }
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    // AndroidX Core - Compatible with 2023+
+    implementation("androidx.core:core-ktx:1.12.0")  // Released: May 2023
+
+    // AppCompat - Compatible with 2023+
+    implementation("androidx.appcompat:appcompat:1.6.1")  // Released: Jan 2023
+
+    // Material Design - Compatible with 2023+
+    implementation("com.google.android.material:material:1.11.0")  // Released: Nov 2023
+
+    // Test dependencies
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
 
 // Publishing configuration for JitPack
@@ -87,3 +126,4 @@ afterEvaluate {
         }
     }
 }
+

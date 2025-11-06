@@ -1,293 +1,414 @@
-# ✅ Current Time Indicator - Perbaikan Update
+# Current Time Indicator Fix
 
-## 🔧 Perubahan yang Dilakukan
+> **⚠️ AI-Generated Project Disclaimer**  
+> This project was created with the assistance of Artificial Intelligence (AI). While the code has been reviewed and tested, users should verify functionality for their specific use cases.
 
-### 1. **Indicator Muncul di Depan Cards** ✨
-- Current time indicator sekarang di-render dalam layer terpisah (overlay)
-- Muncul **DI ATAS** semua appointment cards
-- Tidak tertutup oleh cards
+## Issue Overview
 
-### 2. **Posisi Bulat di Time Column** ✨
-- Bulat merah sekarang berada di **time column** (sisi kiri)
-- Posisi: 4dp dari edge kanan time column
-- Lebih sesuai dengan design yang diminta
+This document describes the implementation and fixes related to the current time indicator feature in the Timeline Schedule library.
 
-### 3. **Garis Horizontal yang Jelas** ✨
-- Garis merah melintang dari time column sampai ujung kanan
-- Width dapat dikustomisasi (default 3f)
-- Sangat terlihat jelas
+## Feature Description
 
----
+The current time indicator is a visual element that shows the exact current time on the timeline. It consists of:
+1. A horizontal line spanning across the timeline
+2. A circular dot at the start of the line (on the time column edge)
+3. Auto-updates every minute to reflect the current time
 
-## 📊 Visual Result
+## Implementation Details
 
-**Before:**
-```
-┌─────────┬──────────────────────────────────────────┐
-│ 10:00   │   [Card]                                 │
-│         │            ●━━━━━━━━━ (behind card)      │
-│ 11:00   │                                          │
-└─────────┴──────────────────────────────────────────┘
-```
+### Visual Components
 
-**After:**
-```
-┌─────────┬──────────────────────────────────────────┐
-│ 10:00   │   [Card]                                 │
-│       ● ├━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━│ ← On top!
-│ 11:00   │                                          │
-└─────────┴──────────────────────────────────────────┘
-     ↑
-  Dot in time
-   column
-```
-
----
-
-## 🏗️ Technical Implementation
-
-### Architecture Changes
-
-**View Hierarchy:**
-```
-TimelineScheduleView
-├── ScrollView
-    └── FrameLayout (timeline container)
-        ├── LinearLayout (time column)
-        ├── FrameLayout (appointments)
-        └── View (current time overlay) ← NEW! On top
-```
-
-### Key Changes:
-
-1. **Overlay View:**
 ```kotlin
-currentTimeIndicatorView = object : View(context) {
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
+private fun drawCurrentTimeIndicator(canvas: Canvas) {
+    if (!config.showCurrentTimeIndicator) return
+    
+    val now = Date()
+    val yPosition = timeToPixel(now)
+    
+    // Line Paint
+    val linePaint = Paint().apply {
+        color = config.currentTimeIndicatorColor
+        strokeWidth = config.currentTimeIndicatorWidth
+        style = Paint.Style.STROKE
+    }
+    
+    // Dot Paint
+    val dotPaint = Paint().apply {
+        color = config.currentTimeIndicatorColor
+        style = Paint.Style.FILL
+    }
+    
+    // Draw horizontal line
+    canvas.drawLine(
+        config.timeColumnWidth.toFloat(),
+        yPosition,
+        width.toFloat(),
+        yPosition,
+        linePaint
+    )
+    
+    // Draw dot at the start
+    canvas.drawCircle(
+        config.timeColumnWidth.toFloat(),
+        yPosition,
+        config.currentTimeDotRadius,
+        dotPaint
+    )
+}
+```
+
+### Auto-Update Mechanism
+
+```kotlin
+private val updateHandler = Handler(Looper.getMainLooper())
+private val updateRunnable = object : Runnable {
+    override fun run() {
         if (config.showCurrentTimeIndicator) {
-            drawCurrentTimeIndicator(canvas)
+            invalidate() // Trigger redraw
+            updateHandler.postDelayed(this, 60000) // Every 60 seconds
         }
     }
 }
+
+override fun onAttachedToWindow() {
+    super.onAttachedToWindow()
+    if (config.showCurrentTimeIndicator) {
+        updateHandler.post(updateRunnable)
+    }
+}
+
+override fun onDetachedFromWindow() {
+    super.onDetachedFromWindow()
+    updateHandler.removeCallbacks(updateRunnable)
+}
 ```
 
-2. **Drawing Logic:**
+## Common Issues and Fixes
+
+### Issue 1: Indicator Not Visible
+
+**Symptoms:**
+- Current time indicator doesn't appear on the timeline
+- Line is drawn but not visible
+
+**Possible Causes:**
+1. Feature disabled in configuration
+2. Color matches background
+3. Current time outside visible range
+4. Indicator width too small
+
+**Fixes:**
+
+```kotlin
+// 1. Ensure feature is enabled
+val config = TimelineConfig(
+    showCurrentTimeIndicator = true  // Must be true
+)
+
+// 2. Use contrasting color
+val config = TimelineConfig(
+    currentTimeIndicatorColor = Color.RED  // Or any contrasting color
+)
+
+// 3. Ensure current time is in range
+// The timeline should cover current hour
+
+// 4. Use visible width
+val config = TimelineConfig(
+    currentTimeIndicatorWidth = 3f  // At least 2-3 pixels
+)
+```
+
+### Issue 2: Indicator Position Wrong
+
+**Symptoms:**
+- Indicator appears at wrong time
+- Indicator doesn't align with actual current time
+
+**Possible Causes:**
+1. Time calculation error
+2. Timezone issues
+3. Hour height miscalculation
+
+**Fixes:**
+
+```kotlin
+private fun timeToPixel(time: Date): Float {
+    val calendar = Calendar.getInstance().apply { 
+        this.time = time 
+    }
+    
+    // Use 24-hour format for calculation
+    val hour = calendar.get(Calendar.HOUR_OF_DAY)  // 0-23
+    val minute = calendar.get(Calendar.MINUTE)      // 0-59
+    
+    // Calculate position from start of day
+    val totalMinutes = hour * 60 + minute
+    val minutesInHour = 60f
+    val hoursPassed = totalMinutes / minutesInHour
+    
+    return hoursPassed * config.hourHeight
+}
+```
+
+### Issue 3: Indicator Not Updating
+
+**Symptoms:**
+- Indicator stays at initial position
+- Doesn't move as time progresses
+
+**Possible Causes:**
+1. Update handler not started
+2. Handler callbacks removed prematurely
+3. View not invalidating
+
+**Fixes:**
+
+```kotlin
+// Ensure proper lifecycle management
+override fun onAttachedToWindow() {
+    super.onAttachedToWindow()
+    startIndicatorUpdates()
+}
+
+override fun onDetachedFromWindow() {
+    super.onDetachedFromWindow()
+    stopIndicatorUpdates()
+}
+
+private fun startIndicatorUpdates() {
+    if (config.showCurrentTimeIndicator) {
+        updateHandler.removeCallbacks(updateRunnable) // Clear existing
+        updateHandler.post(updateRunnable)             // Start new
+    }
+}
+
+private fun stopIndicatorUpdates() {
+    updateHandler.removeCallbacks(updateRunnable)
+}
+```
+
+### Issue 4: Dot Not Aligned with Line
+
+**Symptoms:**
+- Circular dot doesn't align with the horizontal line
+- Dot appears above or below the line
+
+**Root Cause:**
+The dot's Y coordinate and the line's Y coordinate must be exactly the same.
+
+**Fix:**
+
 ```kotlin
 private fun drawCurrentTimeIndicator(canvas: Canvas) {
-    val now = Calendar.getInstance()
-    val currentHour = now.get(Calendar.HOUR_OF_DAY)
-    val currentMinute = now.get(Calendar.MINUTE)
+    if (!config.showCurrentTimeIndicator) return
     
-    if (currentHour in startHour..endHour) {
-        val y = calculateYPosition(currentMinuteOfDay, hourHeight)
-        val timeColumnWidth = config.timeColumnWidth.dpToPx()
-        val dotRadius = config.currentTimeDotRadius.dpToPixels()
-        
-        // Dot in time column (left side)
-        val dotX = timeColumnWidth - dotRadius - 4.dpToPx()
-        canvas.drawCircle(dotX, y, dotRadius, currentTimeDotPaint)
-        
-        // Line from time column to end
-        canvas.drawLine(
-            timeColumnWidth.toFloat(),
-            y,
-            width.toFloat(),
-            y,
-            currentTimeLinePaint
-        )
+    val now = Date()
+    val yPosition = timeToPixel(now)  // Calculate once
+    
+    val paint = Paint().apply {
+        color = config.currentTimeIndicatorColor
+    }
+    
+    // Draw line
+    paint.strokeWidth = config.currentTimeIndicatorWidth
+    paint.style = Paint.Style.STROKE
+    canvas.drawLine(
+        config.timeColumnWidth.toFloat(),
+        yPosition,  // Use same Y
+        width.toFloat(),
+        yPosition,  // Use same Y
+        paint
+    )
+    
+    // Draw dot
+    paint.style = Paint.Style.FILL
+    canvas.drawCircle(
+        config.timeColumnWidth.toFloat(),
+        yPosition,  // Use same Y
+        config.currentTimeDotRadius,
+        paint
+    )
+}
+```
+
+### Issue 5: Performance Impact
+
+**Symptoms:**
+- UI lag or stuttering
+- Battery drain
+- Excessive CPU usage
+
+**Possible Causes:**
+1. Update frequency too high
+2. Invalidating entire view instead of just indicator region
+3. Not stopping updates when view is not visible
+
+**Optimizations:**
+
+```kotlin
+// 1. Update only once per minute (not every second)
+updateHandler.postDelayed(this, 60000)  // 60 seconds
+
+// 2. Invalidate only indicator region
+private fun invalidateIndicator() {
+    val yPosition = timeToPixel(Date())
+    val rect = Rect(
+        0,
+        (yPosition - config.currentTimeIndicatorWidth).toInt(),
+        width,
+        (yPosition + config.currentTimeIndicatorWidth).toInt()
+    )
+    invalidate(rect)  // Only invalidate indicator area
+}
+
+// 3. Stop updates when not visible
+override fun onVisibilityChanged(changedView: View, visibility: Int) {
+    super.onVisibilityChanged(changedView, visibility)
+    if (visibility == View.VISIBLE) {
+        startIndicatorUpdates()
+    } else {
+        stopIndicatorUpdates()
     }
 }
 ```
 
-3. **Z-Index Ordering:**
-   - Time column: Layer 0 (bottom)
-   - Appointment cards: Layer 1 (middle)
-   - Current time indicator: Layer 2 (top) ✨
+## Configuration Options
 
----
-
-## 💡 Benefits
-
-### 1. Always Visible
-- ✅ Indicator tidak pernah tertutup cards
-- ✅ Selalu terlihat jelas
-- ✅ User langsung tahu waktu sekarang
-
-### 2. Clean Design
-- ✅ Dot di time column (bukan di area cards)
-- ✅ Line melintang dengan jelas
-- ✅ Tidak mengganggu cards
-
-### 3. Performance
-- ✅ Efficient rendering dengan overlay
-- ✅ Tidak perlu re-render cards
-- ✅ Smooth scrolling
-
----
-
-## 🎨 Configuration (No Changes Needed)
-
-Configuration tetap sama, tidak perlu update:
+### Available Settings
 
 ```kotlin
+data class TimelineConfig(
+    // Enable/disable feature
+    val showCurrentTimeIndicator: Boolean = true,
+    
+    // Line color
+    val currentTimeIndicatorColor: Int = Color.RED,
+    
+    // Line width in pixels
+    val currentTimeIndicatorWidth: Float = 2f,
+    
+    // Dot radius in pixels
+    val currentTimeDotRadius: Float = 6f
+)
+```
+
+### Recommended Values
+
+| Setting | Recommended | Range | Notes |
+|---------|-------------|-------|-------|
+| `currentTimeIndicatorColor` | `#FF5252` (Red) | Any color | Use contrasting color |
+| `currentTimeIndicatorWidth` | `2-3f` | 1-5f | Too thin may be invisible |
+| `currentTimeDotRadius` | `6f` | 4-10f | Should be visible but not obtrusive |
+
+### Example Configurations
+
+**Bold Indicator:**
+```kotlin
 TimelineConfig(
-    showCurrentTimeIndicator = true,
-    currentTimeIndicatorColor = Color.parseColor("#FF5252"),
+    currentTimeIndicatorColor = Color.parseColor("#FF0000"),
+    currentTimeIndicatorWidth = 4f,
+    currentTimeDotRadius = 8f
+)
+```
+
+**Subtle Indicator:**
+```kotlin
+TimelineConfig(
+    currentTimeIndicatorColor = Color.parseColor("#BDBDBD"),
+    currentTimeIndicatorWidth = 1f,
+    currentTimeDotRadius = 4f
+)
+```
+
+**Accent Color Indicator:**
+```kotlin
+TimelineConfig(
+    currentTimeIndicatorColor = getColor(R.color.colorAccent),
     currentTimeIndicatorWidth = 3f,
     currentTimeDotRadius = 6f
 )
 ```
 
----
+## Testing
 
-## 📝 Code Changes Summary
+### Manual Testing Steps
 
-### Files Modified:
-1. **TimelineScheduleView.kt**
-   - Added `currentTimeIndicatorView` overlay
-   - Moved indicator drawing to separate overlay
-   - Positioned dot in time column area
-   - Line extends from time column to right edge
+1. **Visual Verification:**
+   - Run app and check if indicator appears
+   - Verify it's at the correct current time
+   - Check color and visibility
 
-### Changes:
+2. **Update Testing:**
+   - Wait one minute
+   - Verify indicator moves to new position
+   - Check that old indicator is cleared
+
+3. **Lifecycle Testing:**
+   - Rotate device (check indicator persists)
+   - Background/foreground app (check updates stop/resume)
+   - Navigate away and back (check indicator still works)
+
+4. **Edge Cases:**
+   - Test at midnight (00:00)
+   - Test at noon (12:00)
+   - Test with different timezones
+
+### Automated Tests
+
 ```kotlin
-// OLD: Indicator drawn in GridBackground (behind cards)
-private inner class GridBackground {
-    override fun draw(canvas: Canvas) {
-        // ... grid lines
-        drawCurrentTimeIndicator(canvas, width, hourHeight)
-    }
+@Test
+fun testCurrentTimeIndicatorPositioning() {
+    val now = Date()
+    val yPosition = timelineView.timeToPixel(now)
+    
+    // Verify position is within expected range
+    assertTrue(yPosition >= 0)
+    assertTrue(yPosition <= timelineView.height)
 }
 
-// NEW: Indicator drawn in separate overlay (on top)
-currentTimeIndicatorView = object : View(context) {
-    override fun onDraw(canvas: Canvas) {
-        if (config.showCurrentTimeIndicator) {
-            drawCurrentTimeIndicator(canvas)
-        }
-    }
+@Test
+fun testIndicatorUpdateFrequency() {
+    val initialTime = timelineView.getCurrentIndicatorPosition()
+    
+    // Simulate 1 minute passing
+    Thread.sleep(61000)
+    
+    val updatedTime = timelineView.getCurrentIndicatorPosition()
+    
+    // Position should have changed
+    assertNotEquals(initialTime, updatedTime)
 }
 ```
 
----
+## Troubleshooting Checklist
 
-## 🔍 Testing
+- [ ] `showCurrentTimeIndicator = true` in config
+- [ ] Indicator color contrasts with background
+- [ ] Current time is within timeline's time range
+- [ ] `hourHeight` is configured correctly
+- [ ] View is attached to window
+- [ ] Update handler is running
+- [ ] No exceptions in logs
+- [ ] Device time is correct
 
-### Test Scenarios:
+## Known Limitations
 
-1. **Dot Position** ✅
-   - Dot appears in time column
-   - 4dp from right edge of time column
-   - Vertically aligned with current time
+1. Updates only once per minute (not real-time seconds)
+2. Uses device local time only (no timezone conversion)
+3. Indicator stops when view is detached
+4. May not be visible if timeline doesn't cover current hour
 
-2. **Line Extension** ✅
-   - Line starts from time column edge
-   - Extends to right edge of view
-   - Clear and visible
+## Future Enhancements
 
-3. **Z-Order** ✅
-   - Indicator appears on top of all cards
-   - Not hidden by overlapping appointments
-   - Always visible when scrolling
-
-4. **Dynamic Update** ✅
-   - Position updates based on current time
-   - Recalculates on view invalidate
-   - Smooth positioning
-
----
-
-## 🎯 Use Case Examples
-
-### Medical Appointment System
-```
-09:00 AM │ [Patient A]
-       ● ├━━━━━━━━━━━━━━━━━━━━━━━━ ← Current time: 09:15 AM
-10:00 AM │ [Patient B]  [Patient C]
-11:00 AM │
-```
-
-### Meeting Room Schedule
-```
-10:00 AM │ [Team Meeting]
-       ● ├━━━━━━━━━━━━━━━━━━━━━━━━ ← Now: 10:30 AM
-11:00 AM │ [Client Call]
-12:00 PM │
-```
-
-### Salon Booking
-```
-02:00 PM │ [Haircut - Sarah]
-03:00 PM │ [Color - Jane]
-       ● ├━━━━━━━━━━━━━━━━━━━━━━━━ ← 03:45 PM
-04:00 PM │ [Styling - Mike]
-```
+- [ ] Configurable update frequency
+- [ ] Timezone support
+- [ ] Animation when indicator moves
+- [ ] Custom indicator shapes
+- [ ] Multiple time indicator colors
+- [ ] Indicator with time label
 
 ---
 
-## 🐛 Troubleshooting
-
-### Indicator Not Visible?
-
-**Check:**
-1. `showCurrentTimeIndicator = true`
-2. Current time is within the displayed hour range
-3. Color contrast with background
-
-### Dot Position Wrong?
-
-**Verify:**
-- `timeColumnWidth` configuration
-- `currentTimeDotRadius` size
-- Screen size and density
-
-### Line Not Showing?
-
-**Ensure:**
-- `currentTimeIndicatorWidth` is visible (2f-4f)
-- Color is contrasting
-- Line paint is initialized properly
-
----
-
-## 📊 Performance Metrics
-
-- **Rendering**: < 1ms per frame
-- **Memory**: +1 View (negligible)
-- **CPU**: No additional processing
-- **Battery**: No impact
-
----
-
-## ✅ Verification
-
-Build Status:
-```bash
-> Task :timelineschedule:compileReleaseKotlin
-BUILD SUCCESSFUL in 3s
-31 actionable tasks: 27 executed
-```
-
-No errors, only minor warnings (non-critical).
-
----
-
-## 🎉 Summary
-
-### What Changed:
-✅ Indicator now renders **ON TOP** of cards  
-✅ Dot positioned in **time column** (left side)  
-✅ Line extends **clearly** from time column to right edge  
-✅ **No configuration changes** needed  
-✅ **Fully backward compatible**  
-
-### Result:
-Current time indicator sekarang bekerja **sempurna** seperti design yang Anda minta! 🚀
-
----
-
-**Updated: November 6, 2024**  
-**Version: 1.0.1**  
-**Status: ✅ Fixed & Tested**
+Made with ❤️ and AI assistance
 

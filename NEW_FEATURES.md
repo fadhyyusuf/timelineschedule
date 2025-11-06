@@ -1,313 +1,353 @@
-# Timeline Schedule Library - New Features Update
+# New Features
 
-## ✨ New Features Added!
+> **⚠️ AI-Generated Project Disclaimer**  
+> This project was created with the assistance of Artificial Intelligence (AI). While the code has been reviewed and tested, users should verify functionality for their specific use cases.
 
-### 1. Current Time Indicator
-Garis merah horizontal dengan bulat di depannya yang menunjukkan waktu sekarang secara real-time.
+## Latest Features (v1.0.0)
 
-**Features:**
-- ✅ Red line yang melintang di posisi waktu sekarang
-- ✅ Bulat merah sebagai indicator di awal garis
-- ✅ Otomatis update posisi sesuai waktu
-- ✅ Fully customizable (warna, ketebalan, ukuran bulat)
+### 🏷️ Custom Time Labels
 
-**Configuration:**
+One of the most powerful new features is the ability to set custom time labels instead of the default hourly format.
+
+**Why This Matters:**
+- Display non-standard time intervals (e.g., 30-minute blocks)
+- Use descriptive names instead of times (e.g., "Morning", "Afternoon")
+- Perfect for event schedules, school timetables, or custom workflows
+
+**Usage:**
+
 ```kotlin
-TimelineConfig(
-    showCurrentTimeIndicator = true,                        // Enable/disable
-    currentTimeIndicatorColor = Color.parseColor("#FF5252"), // Red color
-    currentTimeIndicatorWidth = 3f,                          // Line thickness
-    currentTimeDotRadius = 6f                                // Dot size
+val customLabels = listOf(
+    "Morning Session",
+    "Coffee Break",
+    "Workshop A",
+    "Lunch",
+    "Workshop B",
+    "Closing"
 )
-```
 
-### 2. Improved Grid Lines
-Grid lines dan divider sekarang lebih jelas dan terlihat.
-
-**Improvements:**
-- ✅ Grid lines horizontal lebih tebal (default 2f)
-- ✅ Vertical divider antara time column dan appointments
-- ✅ Warna lebih gelap untuk visibility lebih baik
-- ✅ Customizable thickness dan color
-
-**Configuration:**
-```kotlin
-TimelineConfig(
-    // Horizontal grid lines
-    showGridLines = true,
-    gridLineColor = Color.parseColor("#BDBDBD"),  // Darker gray
-    gridLineWidth = 2f,                            // Thicker
-    
-    // Vertical divider
-    showVerticalDivider = true,
-    verticalDividerColor = Color.parseColor("#BDBDBD"),
-    verticalDividerWidth = 2f
-)
-```
-
----
-
-## 📸 Visual Comparison
-
-### Before:
-- Grid lines tipis dan kurang terlihat
-- Tidak ada current time indicator
-- Tidak ada vertical divider
-
-### After:
-- ✅ Grid lines lebih tebal dan jelas
-- ✅ Current time indicator dengan red line dan dot
-- ✅ Vertical divider yang jelas
-
----
-
-## 🔧 Usage Examples
-
-### Example 1: Default Configuration (Recommended)
-```kotlin
 val config = TimelineConfig(
-    hourHeight = 120,
-    showGridLines = true,
-    gridLineColor = Color.parseColor("#BDBDBD"),
-    gridLineWidth = 2f,
-    showVerticalDivider = true,
-    showCurrentTimeIndicator = true,
-    currentTimeIndicatorColor = Color.parseColor("#FF5252"),
-    currentTimeIndicatorWidth = 3f,
-    currentTimeDotRadius = 6f
+    customTimeLabels = customLabels
 )
 
 timelineView.setConfig(config)
 ```
 
-### Example 2: Custom Colors
+**Learn More:** See [CUSTOM_TIME_LABELS.md](CUSTOM_TIME_LABELS.md) for complete documentation.
+
+---
+
+### 📱 Smart Overlapping Appointment Layout
+
+Automatically handles overlapping appointments by displaying them in separate columns.
+
+**Features:**
+- Automatic detection of overlapping time slots
+- Dynamic column calculation
+- Responsive width adjustment
+- Visual separation between columns
+
+**Example:**
+
+```kotlin
+// These appointments overlap and will be displayed side-by-side
+val appointments = listOf(
+    Appointment(
+        id = "1",
+        title = "Meeting A",
+        startTime = createTime(9, 0),
+        endTime = createTime(10, 0),
+        color = Color.BLUE
+    ),
+    Appointment(
+        id = "2",
+        title = "Meeting B",
+        startTime = createTime(9, 30),  // Overlaps with Meeting A
+        endTime = createTime(10, 30),
+        color = Color.GREEN
+    )
+)
+```
+
+---
+
+### ⏰ Real-Time Current Time Indicator
+
+Visual indicator showing exactly where the current time is on the timeline.
+
+**Features:**
+- Animated red line across the timeline
+- Circular dot at the start for emphasis
+- Auto-updates every minute
+- Fully customizable appearance
+
+**Customization:**
+
 ```kotlin
 val config = TimelineConfig(
-    // Blue current time indicator
     showCurrentTimeIndicator = true,
-    currentTimeIndicatorColor = Color.parseColor("#2196F3"),
-    currentTimeIndicatorWidth = 2f,
-    currentTimeDotRadius = 5f,
-    
-    // Light gray grid
-    gridLineColor = Color.parseColor("#E0E0E0"),
-    gridLineWidth = 1f
-)
-```
-
-### Example 3: Minimal (No Current Time)
-```kotlin
-val config = TimelineConfig(
-    showCurrentTimeIndicator = false,  // Disable current time
-    showGridLines = true,
-    gridLineWidth = 2f
-)
-```
-
-### Example 4: High Contrast
-```kotlin
-val config = TimelineConfig(
-    // Dark grid lines
-    gridLineColor = Color.parseColor("#757575"),
-    gridLineWidth = 3f,
-    
-    // Bright red current time
-    currentTimeIndicatorColor = Color.parseColor("#F44336"),
-    currentTimeIndicatorWidth = 4f,
-    currentTimeDotRadius = 8f
-)
-```
-
----
-
-## 🎨 Customization Options
-
-### Current Time Indicator
-
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `showCurrentTimeIndicator` | Boolean | true | Show/hide indicator |
-| `currentTimeIndicatorColor` | Int | #FF5252 | Line and dot color |
-| `currentTimeIndicatorWidth` | Float | 2f | Line thickness in dp |
-| `currentTimeDotRadius` | Float | 6f | Dot radius in dp |
-
-### Grid Lines
-
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `showGridLines` | Boolean | true | Show/hide horizontal lines |
-| `gridLineColor` | Int | #E0E0E0 | Line color |
-| `gridLineWidth` | Float | 2f | Line thickness in dp |
-
-### Vertical Divider
-
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `showVerticalDivider` | Boolean | true | Show/hide divider |
-| `verticalDividerColor` | Int | #E0E0E0 | Divider color |
-| `verticalDividerWidth` | Float | 2f | Divider thickness in dp |
-
----
-
-## 💡 Tips & Best Practices
-
-### 1. Grid Line Visibility
-Untuk visibility yang baik, gunakan:
-- Thickness: 2f - 3f
-- Color: #BDBDBD atau lebih gelap
-
-### 2. Current Time Indicator
-- Gunakan warna kontras (red recommended)
-- Thickness 2f - 4f untuk visibility
-- Dot radius 5f - 8f untuk proportional look
-
-### 3. Performance
-- Current time indicator di-draw menggunakan Canvas
-- Minimal performance impact
-- Update otomatis saat view di-redraw
-
-### 4. Dark Mode
-Untuk dark mode, adjust colors:
-```kotlin
-TimelineConfig(
-    gridLineColor = Color.parseColor("#424242"),
-    verticalDividerColor = Color.parseColor("#424242"),
-    currentTimeIndicatorColor = Color.parseColor("#FF5252")
-)
-```
-
----
-
-## 🔄 Migration from Previous Version
-
-Jika Anda sudah menggunakan versi sebelumnya:
-
-### Old Code:
-```kotlin
-val config = TimelineConfig(
-    hourHeight = 120,
-    showGridLines = true
-)
-```
-
-### New Code (Dengan Features Baru):
-```kotlin
-val config = TimelineConfig(
-    hourHeight = 120,
-    showGridLines = true,
-    gridLineWidth = 2f,                    // NEW: Thicker lines
-    showVerticalDivider = true,            // NEW: Vertical divider
-    showCurrentTimeIndicator = true,       // NEW: Current time indicator
-    currentTimeIndicatorColor = Color.parseColor("#FF5252")
-)
-```
-
-**Note:** Semua property baru optional dengan default values yang bagus!
-
----
-
-## 🐛 Troubleshooting
-
-### Current Time Indicator Tidak Muncul
-
-**Possible causes:**
-1. `showCurrentTimeIndicator = false` in config
-2. Current time di luar range appointments
-3. Warna sama dengan background
-
-**Solutions:**
-```kotlin
-// Ensure it's enabled
-config.showCurrentTimeIndicator = true
-
-// Use contrasting color
-config.currentTimeIndicatorColor = Color.parseColor("#FF5252")
-
-// Make sure time range includes current time
-```
-
-### Grid Lines Tidak Terlihat
-
-**Solutions:**
-```kotlin
-// Use darker color
-config.gridLineColor = Color.parseColor("#BDBDBD")
-
-// Increase thickness
-config.gridLineWidth = 2f or 3f
-
-// Ensure enabled
-config.showGridLines = true
-```
-
----
-
-## 📊 Technical Details
-
-### Current Time Calculation
-```kotlin
-val now = Calendar.getInstance()
-val currentHour = now.get(Calendar.HOUR_OF_DAY)
-val currentMinute = now.get(Calendar.MINUTE)
-val currentMinuteOfDay = currentHour * 60 + currentMinute
-```
-
-### Drawing Order
-1. Horizontal grid lines
-2. Vertical divider
-3. Appointments
-4. Current time indicator (on top)
-
-### Coordinate System
-- Y position calculated from start hour
-- Precise to minute level
-- Scales with `hourHeight` config
-
----
-
-## 🎯 Use Cases
-
-### Medical/Hospital Scheduling
-```kotlin
-TimelineConfig(
-    currentTimeIndicatorColor = Color.parseColor("#F44336"),
+    currentTimeIndicatorColor = Color.parseColor("#FF5252"),
     currentTimeIndicatorWidth = 3f,
-    gridLineWidth = 2f
+    currentTimeDotRadius = 6f
 )
 ```
 
-### Calendar/Meeting Rooms
+---
+
+### 🎨 Full Visual Customization
+
+Every visual aspect of the timeline can be customized to match your app's design.
+
+**Customizable Elements:**
+
+1. **Layout Dimensions**
+   ```kotlin
+   hourHeight = 120,              // Height of each time block
+   timeColumnWidth = 80,          // Width of time label area
+   appointmentPadding = 4         // Space between columns
+   ```
+
+2. **Time Format**
+   ```kotlin
+   use24HourFormat = false        // 12h vs 24h format
+   ```
+
+3. **Grid Lines**
+   ```kotlin
+   showGridLines = true,
+   gridLineColor = Color.GRAY,
+   gridLineWidth = 1f
+   ```
+
+4. **Vertical Divider**
+   ```kotlin
+   showVerticalDivider = true,
+   verticalDividerColor = Color.GRAY,
+   verticalDividerWidth = 2f
+   ```
+
+5. **Appointment Cards**
+   ```kotlin
+   cardCornerRadius = 8f,
+   cardElevation = 2f
+   ```
+
+6. **Text Styling**
+   ```kotlin
+   timeLabelTextSize = 14f,
+   appointmentTitleTextSize = 14f,
+   appointmentSubtitleTextSize = 12f
+   ```
+
+---
+
+### 🎯 Click Event Handling
+
+Simple and intuitive click handling for appointments.
+
+**Usage:**
+
 ```kotlin
-TimelineConfig(
-    currentTimeIndicatorColor = Color.parseColor("#2196F3"),
-    showVerticalDivider = true,
-    gridLineColor = Color.parseColor("#BDBDBD")
-)
+timelineView.setOnAppointmentClickListener { appointment ->
+    // Handle click
+    Toast.makeText(this, "Clicked: ${appointment.title}", Toast.LENGTH_SHORT).show()
+    
+    // Or navigate to details
+    startActivity(Intent(this, AppointmentDetailsActivity::class.java).apply {
+        putExtra("appointment_id", appointment.id)
+    })
+}
 ```
 
-### Salon/Spa Appointments
+---
+
+### 📐 Flexible Grid System
+
+Optional grid lines help users visualize time blocks more clearly.
+
+**Options:**
+- Show or hide grid lines
+- Customize color and width
+- Automatic spacing based on `hourHeight`
+
+**Example:**
+
 ```kotlin
-TimelineConfig(
-    currentTimeIndicatorColor = Color.parseColor("#E91E63"),
-    currentTimeDotRadius = 8f,
+val config = TimelineConfig(
+    showGridLines = true,
+    gridLineColor = Color.parseColor("#E0E0E0"),
     gridLineWidth = 2f
 )
 ```
 
 ---
 
-## 📝 What's Next?
+### 🌈 Color-Coded Appointments
 
-Upcoming features (planned):
-- [ ] Auto-refresh current time indicator
-- [ ] Animation for current time line
-- [ ] Custom indicator styles (dashed, dotted)
-- [ ] Time labels on hover
-- [ ] Dark mode auto-detection
+Support for both border colors and background colors on appointments.
+
+**Usage:**
+
+```kotlin
+Appointment(
+    id = "1",
+    title = "Important Meeting",
+    subtitle = "Conference Room A",
+    startTime = startTime,
+    endTime = endTime,
+    color = Color.parseColor("#E91E63"),           // Border/text color
+    backgroundColor = Color.parseColor("#FCE4EC")   // Card background
+)
+```
+
+**Color Scheme Examples:**
+
+```kotlin
+// Success/Confirmed (Green)
+color = Color.parseColor("#4CAF50")
+backgroundColor = Color.parseColor("#E8F5E9")
+
+// Warning/Pending (Orange)
+color = Color.parseColor("#FF9800")
+backgroundColor = Color.parseColor("#FFF3E0")
+
+// Error/Cancelled (Red)
+color = Color.parseColor("#F44336")
+backgroundColor = Color.parseColor("#FFEBEE")
+
+// Info/Default (Blue)
+color = Color.parseColor("#2196F3")
+backgroundColor = Color.parseColor("#E3F2FD")
+```
 
 ---
 
-**Updated: November 6, 2024**  
-**Version: 1.0.0**  
-**Status: ✅ Production Ready**
+## Upcoming Features (Planned)
+
+### 🗓️ Week View
+Display multiple days side-by-side in a weekly format.
+
+### 📅 Month View
+Month calendar view with appointment indicators.
+
+### ✋ Drag and Drop
+Drag appointments to new time slots.
+
+### 📏 Resize Appointments
+Drag edges to adjust appointment duration.
+
+### 🔍 Zoom Controls
+Pinch to zoom in/out on the timeline.
+
+### 🎭 Material 3 Themes
+Full Material Design 3 theme support.
+
+### 🔄 Animations
+Smooth animations for adding, removing, and updating appointments.
+
+### 🌍 Multi-Day Appointments
+Support for appointments spanning multiple days.
+
+### 🕐 Multiple Timezones
+Display appointments in different timezones.
+
+### 📊 Appointment Statistics
+Built-in statistics and analytics views.
+
+---
+
+## Feature Requests
+
+Have an idea for a new feature? We'd love to hear it!
+
+1. **Check existing issues**: [GitHub Issues](https://github.com/fadhyyusuf/timelineschedule/issues)
+2. **Open a new issue**: Describe your feature request
+3. **Contribute**: Submit a pull request with your implementation
+
+---
+
+## Breaking Changes Policy
+
+We follow semantic versioning:
+- **Major version** (e.g., 2.0.0): May include breaking changes
+- **Minor version** (e.g., 1.1.0): New features, backward compatible
+- **Patch version** (e.g., 1.0.1): Bug fixes, backward compatible
+
+Breaking changes will be:
+- Clearly documented in [CHANGELOG.md](CHANGELOG.md)
+- Accompanied by migration guides
+- Announced in release notes
+
+---
+
+## Experimental Features
+
+Some features may be released as experimental before becoming stable. These will be:
+- Marked with `@Experimental` annotation
+- Documented as experimental in the API docs
+- Subject to change in future releases
+
+To use experimental features:
+
+```kotlin
+@OptIn(ExperimentalTimelineApi::class)
+fun setupTimeline() {
+    // Use experimental features
+}
+```
+
+---
+
+## Feature Comparison
+
+| Feature | Version | Status | Documentation |
+|---------|---------|--------|---------------|
+| Vertical Timeline | 1.0.0 | ✅ Stable | [README](README.md) |
+| Overlapping Appointments | 1.0.0 | ✅ Stable | [README](README.md) |
+| Current Time Indicator | 1.0.0 | ✅ Stable | [README](README.md) |
+| Custom Time Labels | 1.0.0 | ✅ Stable | [CUSTOM_TIME_LABELS](CUSTOM_TIME_LABELS.md) |
+| Click Listeners | 1.0.0 | ✅ Stable | [README](README.md) |
+| Full Customization | 1.0.0 | ✅ Stable | [TECHNICAL](TECHNICAL.md) |
+| Week View | Planned | 🚧 Coming | - |
+| Month View | Planned | 🚧 Coming | - |
+| Drag & Drop | Planned | 🚧 Coming | - |
+| Animations | Planned | 🚧 Coming | - |
+
+---
+
+## Performance Enhancements
+
+Recent performance improvements:
+
+### Canvas-Based Rendering
+- Uses efficient canvas drawing instead of view inflation
+- Reduces memory footprint
+- Improves scroll performance
+
+### Smart Invalidation
+- Only redraws when necessary
+- Optimized current time indicator updates
+- Minimal CPU usage
+
+### View Recycling
+- Single custom view for entire timeline
+- No view recycling overhead
+- Consistent performance with large datasets
+
+---
+
+## Feedback
+
+We value your feedback! Let us know:
+- What features you love ❤️
+- What could be improved 💡
+- What features you need 🎯
+
+**Contact:**
+- [GitHub Issues](https://github.com/fadhyyusuf/timelineschedule/issues)
+- [GitHub Discussions](https://github.com/fadhyyusuf/timelineschedule/discussions)
+
+---
+
+Made with ❤️ and AI assistance
 

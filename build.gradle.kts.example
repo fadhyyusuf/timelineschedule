@@ -1,0 +1,28 @@
+/*
+ * Timeline Schedule - Android Library
+ *
+ * ⚠️ AI-GENERATED PROJECT DISCLAIMER
+ * This project was created with the assistance of Artificial Intelligence (AI).
+ * While the code has been reviewed and tested, users should verify functionality
+ * for their specific use cases.
+ *
+ * Copyright (c) 2025 Fadhy Yusuf
+ * Licensed under the MIT License
+ */
+
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+plugins {
+    // Android Gradle Plugin - Compatible with Gradle 8.0+ (Feb 2023)
+    // Minimum: 8.0.0 (May 2023) | Recommended: 8.1.0+ (July 2023)
+    id("com.android.application") version "8.1.4" apply false
+    id("com.android.library") version "8.1.4" apply false
+
+    // Kotlin Plugin - Compatible with AGP 8.0+
+    // Minimum: 1.8.0 (Dec 2022) | Recommended: 1.9.0+ (July 2023)
+    id("org.jetbrains.kotlin.android") version "1.9.20" apply false
+}
+
+tasks.register("clean", Delete::class) {
+    delete(rootProject.buildDir)
+}
+
