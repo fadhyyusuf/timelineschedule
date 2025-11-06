@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="avatar_description">Avatar</string>
+    <string name="appointment_time_format">%1$s - %2$s</string>
+    <string name="today">Today</string>
+</resources>
+

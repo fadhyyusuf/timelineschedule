@@ -1,0 +1,101 @@
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    id("maven-publish")
+}
+
+android {
+    namespace = "com.fy.timelineschedule"
+    compileSdk = 34
+
+    defaultConfig {
+        minSdk = 21
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+
+        // Library versioning
+        version = "1.0.0"
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
+    buildFeatures {
+        viewBinding = true
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
+
+dependencies {
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+}
+
+// Publishing configuration
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+
+                groupId = "com.github.fadhyyusuf"
+                artifactId = "timelineschedule"
+                version = "1.0.0"
+
+                pom {
+                    name.set("Timeline Schedule Library")
+                    description.set("A powerful Android library for displaying appointments in a timeline format with automatic overlap handling")
+                    url.set("https://github.com/fadhyyusuf/timelineschedule")
+
+                    licenses {
+                        license {
+                            name.set("The Apache License, Version 2.0")
+                            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id.set("fadhyyusuf")
+                            name.set("Fadhy Yusuf")
+                            email.set("your.email@example.com")
+                        }
+                    }
+
+                    scm {
+                        connection.set("scm:git:git://github.com/fadhyyusuf/timelineschedule.git")
+                        developerConnection.set("scm:git:ssh://github.com/fadhyyusuf/timelineschedule.git")
+                        url.set("https://github.com/fadhyyusuf/timelineschedule")
+                    }
+                }
+            }
+        }
+    }
+}
+
