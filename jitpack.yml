@@ -1,0 +1,15 @@
+# JitPack Configuration
+# This ensures JitPack builds the project with the correct JDK version
+
+jdk:
+  - openjdk17
+
+# Before install script (optional)
+before_install:
+  - ./scripts/prepareJitpackEnvironment.sh || true
+
+# Install command (optional - JitPack will use default gradle tasks if not specified)
+install:
+  - echo "Building Timeline Schedule Library"
+  - ./gradlew clean build publishToMavenLocal
+
