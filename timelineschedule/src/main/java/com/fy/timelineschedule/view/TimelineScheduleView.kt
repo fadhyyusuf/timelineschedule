@@ -453,6 +453,37 @@ class TimelineScheduleView @JvmOverloads constructor(
     }
 
     /**
+     * Parse hour from a time label string (e.g., "07:00 AM" -> 7, "01:00 PM" -> 13)
+     * Returns -1 if parsing fails
+     */
+    private fun parseHourFromLabel(label: String): Int {
+        try {
+            // Remove whitespace and convert to uppercase for easier parsing
+            val cleanLabel = label.trim().uppercase()
+
+            // Try to extract hour from formats like "07:00 AM", "7:00 AM", "07:00", "7"
+            val hourRegex = Regex("""(\d{1,2})(?::|\s|$)""")
+            val matchResult = hourRegex.find(cleanLabel)
+
+            if (matchResult != null) {
+                var hour = matchResult.groupValues[1].toInt()
+
+                // Check for AM/PM
+                if (cleanLabel.contains("PM") && hour != 12) {
+                    hour += 12
+                } else if (cleanLabel.contains("AM") && hour == 12) {
+                    hour = 0
+                }
+
+                return hour
+            }
+        } catch (e: Exception) {
+            // Parsing failed, return -1
+        }
+        return -1
+    }
+
+    /**
      * Draw horizontal dividers in time column
      */
     private fun drawTimeColumnDividers(canvas: Canvas) {
@@ -479,11 +510,41 @@ class TimelineScheduleView @JvmOverloads constructor(
         val currentHour = now.get(Calendar.HOUR_OF_DAY)
         val currentMinute = now.get(Calendar.MINUTE)
 
-        // Only draw if current time is within the visible range
-        if (currentHour in startHour..endHour) {
-            val hourHeight = config.hourHeight.dpToPx()
+        val hourHeight = config.hourHeight.dpToPx()
+
+        // Calculate Y position based on whether we're using custom labels or auto labels
+        val y: Float
+        val isVisible: Boolean
+
+        val customLabels = config.customTimeLabels
+        if (customLabels != null) {
+            // For custom labels, we need to find the start hour from the first label
+            val firstLabel = customLabels.firstOrNull() ?: return
+            val firstHour = parseHourFromLabel(firstLabel)
+
+            if (firstHour == -1) {
+                // If we can't parse the label, fall back to default behavior
+                val currentMinuteOfDay = currentHour * 60 + currentMinute
+                y = calculateYPosition(currentMinuteOfDay, hourHeight).toFloat()
+                isVisible = currentHour in startHour..endHour
+            } else {
+                // Calculate position relative to the first label's hour
+                val hoursSinceStart = (currentHour - firstHour) + (currentMinute / 60.0)
+                y = (hoursSinceStart * hourHeight).toFloat()
+
+                // Check if current time is within the label range
+                val lastLabel = customLabels.lastOrNull() ?: firstLabel
+                val lastHour = parseHourFromLabel(lastLabel)
+                isVisible = currentHour >= firstHour && currentHour <= lastHour
+            }
+        } else {
+            // For auto labels, use the existing calculateYPosition which accounts for startHour
             val currentMinuteOfDay = currentHour * 60 + currentMinute
-            val y = calculateYPosition(currentMinuteOfDay, hourHeight).toFloat()
+            y = calculateYPosition(currentMinuteOfDay, hourHeight).toFloat()
+            isVisible = currentHour in startHour..endHour
+        }
+
+        if (isVisible && y >= 0) {
 
             // Get time column width to position dot in time column
             val timeColumnWidth = config.timeColumnWidth.dpToPx()

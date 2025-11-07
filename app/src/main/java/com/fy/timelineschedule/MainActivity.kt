@@ -39,17 +39,17 @@ class MainActivity : AppCompatActivity() {
 
         // Example 1: Using custom time labels (dynamic!)
         val customLabels = listOf(
-            "07:00 AM",
-            "08:00 AM",
-            "09:00 AM",
-            "10:00 AM",
-            "11:00 AM",
-            "12:00 PM",
-            "01:00 PM",
-            "02:00 PM",
-            "03:00 PM",
-            "04:00 PM",
-            "05:00 PM"
+            "07:00",
+            "08:00",
+            "09:00",
+            "10:00",
+            "11:00",
+            "12:00",
+            "13:00",
+            "14:00",
+            "15:00",
+            "16:00",
+            "17:00"
         )
 
         // Configure timeline with custom time labels
@@ -175,6 +175,15 @@ class MainActivity : AppCompatActivity() {
                 subtitle = null,
                 startTime = createTime(today, 12, 0),
                 endTime = createTime(today, 13, 0),
+                color = Color.parseColor("#607D8B"),
+                backgroundColor = Color.parseColor("#F5F5F5")
+            )        ,
+            Appointment(
+                id = "8",
+                title = "Seminar",
+                subtitle = null,
+                startTime = createTime(today, 15, 0),
+                endTime = createTime(today, 20, 0),
                 color = Color.parseColor("#607D8B"),
                 backgroundColor = Color.parseColor("#F5F5F5")
             )
