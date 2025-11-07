@@ -56,7 +56,7 @@ afterEvaluate {
 
                 groupId = "com.github.fadhyyusuf"
                 artifactId = "timelineschedule"
-                version = "1.0.1"
+                version = "1.0.2"
 
                 pom {
                     name.set("Timeline Schedule")
